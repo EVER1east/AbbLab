@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using JetBrains.Annotations;
 
 namespace AbbLab.Extensions
@@ -18,11 +17,11 @@ namespace AbbLab.Extensions
         /// <exception cref="InvalidOperationException"><paramref name="source"/> is empty.</exception>
         [Pure] public static T WithMin<T, TResult>([InstantHandle] this IEnumerable<T> source, [InstantHandle] Func<T, TResult> selector)
             => WithMin(source, selector, null);
-		/// <summary>
-		///   <para>Returns an object from the sequence that the specified <paramref name="selector"/> returned the minimum value for.</para>
-		/// </summary>
+        /// <summary>
+        ///   <para>Returns an object from the sequence that the specified <paramref name="selector"/> returned the minimum value for.</para>
+        /// </summary>
         /// <typeparam name="T">The type of the objects to enumerate.</typeparam>
-		/// <typeparam name="TResult">The type of the values of the objects.</typeparam>
+        /// <typeparam name="TResult">The type of the values of the objects.</typeparam>
         /// <param name="source">The sequence of values to search.</param>
         /// <param name="selector">The <see cref="Func{T, TResult}"/> to use to determine the elements' values.</param>
         /// <param name="comparer">The <see cref="IComparer{T}"/> generic interface implementation to use when comparing values.</param>
@@ -107,11 +106,11 @@ namespace AbbLab.Extensions
         /// <returns>An object from the sequence that the <paramref name="selector"/> returned the minimum value for, or <see langword="default"/>, if the sequence is empty.</returns>
         [Pure] public static T? WithMinOrDefault<T, TResult>([InstantHandle] this IEnumerable<T> source, [InstantHandle] Func<T, TResult> selector)
             => WithMinOrDefault(source, selector, null);
-		/// <summary>
-		///   <para>Returns an object from the sequence that the specified <paramref name="selector"/> returned the minimum value for, or <see langword="default"/>, if the sequence is empty.</para>
-		/// </summary>
+        /// <summary>
+        ///   <para>Returns an object from the sequence that the specified <paramref name="selector"/> returned the minimum value for, or <see langword="default"/>, if the sequence is empty.</para>
+        /// </summary>
         /// <typeparam name="T">The type of the objects to enumerate.</typeparam>
-		/// <typeparam name="TResult">The type of the values of the objects.</typeparam>
+        /// <typeparam name="TResult">The type of the values of the objects.</typeparam>
         /// <param name="source">The sequence of values to search.</param>
         /// <param name="selector">The <see cref="Func{T, TResult}"/> to use to determine the elements' values.</param>
         /// <param name="comparer">The <see cref="IComparer{T}"/> generic interface implementation to use when comparing values.</param>
@@ -183,9 +182,9 @@ namespace AbbLab.Extensions
             }
         }
 
-		/// <summary>
-		///   <para>Returns elements from a sequence with distinct values returned by the specified <paramref name="selector"/>.</para>
-		/// </summary>
+        /// <summary>
+        ///   <para>Returns elements from a sequence with distinct values returned by the specified <paramref name="selector"/>.</para>
+        /// </summary>
         /// <typeparam name="T">The type of the objects to enumerate.</typeparam>
         /// <typeparam name="TResult">The type of the objects' unique values.</typeparam>
         /// <param name="source">The sequence to remove elements with duplicate values from.</param>
