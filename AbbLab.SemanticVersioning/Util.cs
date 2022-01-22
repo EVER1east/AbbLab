@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using JetBrains.Annotations;
 
 namespace AbbLab.SemanticVersioning
 {
@@ -109,12 +110,12 @@ namespace AbbLab.SemanticVersioning
         public static StringBuilder SimpleAppend(this StringBuilder sb, SemanticPreRelease preRelease)
             => preRelease.text is null ? sb.SimpleAppend(preRelease.number) : sb.Append(preRelease.text);
 
-        public static bool Fail<TResult>(out TResult? result)
+        [MustUseReturnValue] public static bool Fail<TResult>(out TResult? result)
         {
             result = default;
             return false;
         }
-        public static TReturn Fail<TReturn, TResult>(TReturn returnValue, out TResult? result)
+        [MustUseReturnValue] public static TReturn Fail<TReturn, TResult>(TReturn returnValue, out TResult? result)
         {
             result = default;
             return returnValue;
