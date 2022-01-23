@@ -20,5 +20,7 @@
         PreReleaseLeadingZeroes,
         PreReleaseTooBig,
         BuildMetadataNotFound,
+
+        Leftovers, // used only in SemanticVersion.StrictParse
     }
 }
