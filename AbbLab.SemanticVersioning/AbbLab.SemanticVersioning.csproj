@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AbbLab.Extensions\AbbLab.Extensions.csproj" />
+    <ProjectReference Include="..\AbbLab.Parsing\AbbLab.Parsing.csproj" />
   </ItemGroup>
 
   <ItemGroup>
