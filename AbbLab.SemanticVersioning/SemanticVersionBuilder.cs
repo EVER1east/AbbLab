@@ -301,7 +301,7 @@ namespace AbbLab.SemanticVersioning
         /// <param name="identifiers">A collection of string representations of pre-release identifiers to append.</param>
         /// <returns>A reference to this instance after the operation.</returns>
         /// <exception cref="ArgumentException"><paramref name="identifiers"/> contains an invalid string representation of a pre-release identifier.</exception>
-        public SemanticVersionBuilder AppendPreReleases(IEnumerable<string> identifiers)
+        public SemanticVersionBuilder AppendPreReleases([InstantHandle] IEnumerable<string> identifiers)
         {
             (_preReleases ??= new List<SemanticPreRelease>()).AddRange(identifiers.Select(SemanticPreRelease.Parse));
             return this;
@@ -311,7 +311,7 @@ namespace AbbLab.SemanticVersioning
         /// </summary>
         /// <param name="preReleases">A collection of pre-release identifiers to append.</param>
         /// <returns>A reference to this instance after the operation.</returns>
-        public SemanticVersionBuilder AppendPreReleases(IEnumerable<SemanticPreRelease> preReleases)
+        public SemanticVersionBuilder AppendPreReleases([InstantHandle] IEnumerable<SemanticPreRelease> preReleases)
         {
             (_preReleases ??= new List<SemanticPreRelease>()).AddRange(preReleases);
             return this;
@@ -338,7 +338,7 @@ namespace AbbLab.SemanticVersioning
         /// <param name="identifiers">A collection of build metadata identifiers to append.</param>
         /// <returns>A reference to this instance after the operation.</returns>
         /// <exception cref="ArgumentException"><paramref name="identifiers"/> contains an invalid build metadata identifier.</exception>
-        public SemanticVersionBuilder AppendBuildMetadata(IEnumerable<string> identifiers)
+        public SemanticVersionBuilder AppendBuildMetadata([InstantHandle] IEnumerable<string> identifiers)
         {
             foreach (string identifier in identifiers)
             {
