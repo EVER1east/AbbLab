@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace AbbLab.SemanticVersioning
 {
@@ -12,7 +13,7 @@ namespace AbbLab.SemanticVersioning
 
         public static readonly BuildMetadataComparer Instance = new BuildMetadataComparer();
 
-        public bool Equals(SemanticVersion? a, SemanticVersion? b)
+        [Pure] public bool Equals(SemanticVersion? a, SemanticVersion? b)
         {
             if (ReferenceEquals(a, b)) return true;
             if (a is null || b is null || a.Major != b.Major || a.Minor != b.Minor || a.Patch != b.Patch) return false;
@@ -30,7 +31,7 @@ namespace AbbLab.SemanticVersioning
                     return false;
             return true;
         }
-        public int GetHashCode(SemanticVersion version)
+        [Pure] public int GetHashCode(SemanticVersion version)
         {
             int preReleasesLength = version._preReleases.Length;
             int buildMetadataLength = version._buildMetadata.Length;
@@ -49,7 +50,7 @@ namespace AbbLab.SemanticVersioning
 
             return hash.ToHashCode();
         }
-        public int Compare(SemanticVersion? a, SemanticVersion? b)
+        [Pure] public int Compare(SemanticVersion? a, SemanticVersion? b)
         {
             if (ReferenceEquals(a, b)) return 0;
             if (a is null) return -1;

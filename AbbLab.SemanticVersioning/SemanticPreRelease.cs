@@ -56,30 +56,30 @@ namespace AbbLab.SemanticVersioning
         /// </summary>
         /// <param name="identifier">The string to convert to a <see cref="SemanticPreRelease"/>.</param>
         /// <exception cref="ArgumentException"><paramref name="identifier"/> does not represent a valid pre-release identifier.</exception>
-        public static implicit operator SemanticPreRelease(string identifier) => Parse(identifier);
+        [Pure] public static implicit operator SemanticPreRelease(string identifier) => Parse(identifier);
         /// <summary>
         ///   <para>Defines an implicit conversion of a read-only span of characters to a <see cref="SemanticPreRelease"/> value.</para>
         /// </summary>
         /// <param name="identifier">The read-only span of characters to convert to a <see cref="SemanticPreRelease"/>.</param>
         /// <exception cref="ArgumentException"><paramref name="identifier"/> does not represent a valid pre-release identifier.</exception>
-        public static implicit operator SemanticPreRelease(ReadOnlySpan<char> identifier) => Parse(identifier);
+        [Pure] public static implicit operator SemanticPreRelease(ReadOnlySpan<char> identifier) => Parse(identifier);
         /// <summary>
         ///   <para>Defines an implicit conversion of a 32-bit signed integer to a <see cref="SemanticPreRelease"/> value.</para>
         /// </summary>
         /// <param name="identifier">The 32-bit signed integer to convert to a <see cref="SemanticPreRelease"/> value.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="identifier"/> is less than 0.</exception>
-        public static implicit operator SemanticPreRelease(int identifier) => new SemanticPreRelease(identifier);
+        [Pure] public static implicit operator SemanticPreRelease(int identifier) => new SemanticPreRelease(identifier);
         /// <summary>
         ///   <para>Defines an explicit conversion of a <see cref="SemanticPreRelease"/> value to a string.</para>
         /// </summary>
         /// <param name="preRelease">The pre-release identifier to convert to a string.</param>
-        public static explicit operator string(SemanticPreRelease preRelease) => preRelease.ToString();
+        [Pure] public static explicit operator string(SemanticPreRelease preRelease) => preRelease.ToString();
         /// <summary>
         ///   <para>Defines an explicit conversion of a <see cref="SemanticPreRelease"/> value to a 32-bit signed integer.</para>
         /// </summary>
         /// <param name="preRelease">The pre-release identifier to convert to a 32-bit signed integer.</param>
         /// <exception cref="InvalidOperationException"><paramref name="preRelease"/> is not a numeric pre-release identifier.</exception>
-        public static explicit operator int(SemanticPreRelease preRelease) => preRelease.Number;
+        [Pure] public static explicit operator int(SemanticPreRelease preRelease) => preRelease.Number;
 
         /// <summary>
         ///   <para>The pre-release identifier with a numeric value of <c>0</c>.</para>
