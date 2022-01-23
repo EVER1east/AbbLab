@@ -25,8 +25,8 @@ namespace AbbLab.SemanticVersioning
         /// </summary>
         public int Patch { get; }
 
-        internal readonly SemanticPreRelease[]? _preReleases;
-        internal readonly string[]? _buildMetadata;
+        internal readonly SemanticPreRelease[] _preReleases;
+        internal readonly string[] _buildMetadata;
         internal ReadOnlyCollection<SemanticPreRelease>? _preReleasesReadonly;
         internal ReadOnlyCollection<string>? _buildMetadataReadonly;
         /// <summary>
@@ -37,7 +37,7 @@ namespace AbbLab.SemanticVersioning
             get
             {
                 if (_preReleasesReadonly is not null) return _preReleasesReadonly;
-                if (_preReleases is null || _preReleases.Length is 0)
+                if (_preReleases.Length is 0)
                     return _preReleasesReadonly = ReadOnlyCollection.Empty<SemanticPreRelease>();
                 return _preReleasesReadonly = new ReadOnlyCollection<SemanticPreRelease>(_preReleases);
             }
@@ -50,7 +50,7 @@ namespace AbbLab.SemanticVersioning
             get
             {
                 if (_buildMetadataReadonly is not null) return _buildMetadataReadonly;
-                if (_buildMetadata is null || _buildMetadata.Length is 0)
+                if (_buildMetadata.Length is 0)
                     return _buildMetadataReadonly = ReadOnlyCollection.Empty<string>();
                 return _buildMetadataReadonly = new ReadOnlyCollection<string>(_buildMetadata);
             }
@@ -131,7 +131,8 @@ namespace AbbLab.SemanticVersioning
             string[] preReleasesArray;
             if (preReleases is not null && (preReleasesArray = preReleases.ToArray()).Length > 0)
                 _preReleases = Array.ConvertAll(preReleasesArray, SemanticPreRelease.Parse);
-            SetBuildMetadata(ref _buildMetadata, buildMetadata);
+            else _preReleases = Array.Empty<SemanticPreRelease>();
+            SetBuildMetadata(out _buildMetadata, buildMetadata);
         }
         /// <summary>
         ///   <para>Initializes a new instance of the <see cref="SemanticVersion"/> class with the specified <paramref name="major"/>, <paramref name="minor"/> and <paramref name="patch"/> version components, <paramref name="preReleases"/> and <paramref name="buildMetadata"/>.</para>
@@ -157,10 +158,11 @@ namespace AbbLab.SemanticVersioning
             SemanticPreRelease[] preReleasesArray;
             if (preReleases is not null && (preReleasesArray = preReleases.ToArray()).Length > 0)
                 _preReleases = preReleasesArray;
-            SetBuildMetadata(ref _buildMetadata, buildMetadata);
+            else _preReleases = Array.Empty<SemanticPreRelease>();
+            SetBuildMetadata(out _buildMetadata, buildMetadata);
         }
 
-        private static void SetBuildMetadata(ref string[]? backingField, IEnumerable<string>? buildMetadata)
+        private static void SetBuildMetadata(out string[] backingField, IEnumerable<string>? buildMetadata)
         {
             string[] buildMetadataArray;
             int length;
@@ -176,6 +178,7 @@ namespace AbbLab.SemanticVersioning
                 }
                 backingField = buildMetadataArray;
             }
+            else backingField = Array.Empty<string>();
         }
 
         // A constructor that is used internally, to minimize memory allocation
@@ -184,8 +187,8 @@ namespace AbbLab.SemanticVersioning
             Major = major;
             Minor = minor;
             Patch = patch;
-            _preReleases = preReleases;
-            _buildMetadata = buildMetadata;
+            _preReleases = preReleases ?? Array.Empty<SemanticPreRelease>();
+            _buildMetadata = buildMetadata ?? Array.Empty<string>();
         }
 
         /// <summary>
@@ -197,6 +200,8 @@ namespace AbbLab.SemanticVersioning
             Major = systemVersion.Major;
             Minor = systemVersion.Minor;
             Patch = Math.Max(systemVersion.Build, 0);
+            _preReleases = Array.Empty<SemanticPreRelease>();
+            _buildMetadata = Array.Empty<string>();
         }
         /// <summary>
         ///   <para>Defines an explicit conversion of a <see cref="Version"/> to a <see cref="SemanticVersion"/>.</para>
@@ -216,10 +221,10 @@ namespace AbbLab.SemanticVersioning
         {
             if (ReferenceEquals(this, other)) return true;
             if (other is null || Major != other.Major || Minor != other.Minor || Patch != other.Patch) return false;
-            int length = _preReleases?.Length ?? 0;
-            if (length != (other._preReleases?.Length ?? 0)) return false;
+            int length = _preReleases.Length;
+            if (length != other._preReleases.Length) return false;
             for (int i = 0; i < length; i++)
-                if (!_preReleases![i].Equals(other._preReleases![i]))
+                if (!_preReleases[i].Equals(other._preReleases[i]))
                     return false;
             return true;
         }
@@ -228,7 +233,8 @@ namespace AbbLab.SemanticVersioning
         /// <inheritdoc/>
         public override int GetHashCode()
         {
-            if (_preReleases is null) return HashCode.Combine(Major, Minor, Patch);
+            if (_preReleases.Length is 0)
+                return HashCode.Combine(Major, Minor, Patch);
             HashCode hash = new HashCode();
             hash.Add(Major);
             hash.Add(Minor);
@@ -251,8 +257,8 @@ namespace AbbLab.SemanticVersioning
             res = Patch.CompareTo(other.Patch);
             if (res is not 0) return res;
 
-            int thisLength = _preReleases?.Length ?? 0;
-            int otherLength = other._preReleases?.Length ?? 0;
+            int thisLength = _preReleases.Length;
+            int otherLength = other._preReleases.Length;
             if (thisLength is 0 && otherLength > 0) return 1;
             if (thisLength > 0 && otherLength is 0) return -1;
             int length = Math.Max(thisLength, otherLength);
@@ -260,7 +266,7 @@ namespace AbbLab.SemanticVersioning
             {
                 if (i == thisLength) return i == otherLength ? 0 : -1;
                 if (i == otherLength) return 1;
-                res = _preReleases![i].CompareTo(other._preReleases![i]);
+                res = _preReleases[i].CompareTo(other._preReleases[i]);
                 if (res is not 0) return res;
             }
             return 0;

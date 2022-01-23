@@ -12,14 +12,14 @@ namespace AbbLab.SemanticVersioning
               .SimpleAppend(Minor).Append('.')
               .SimpleAppend(Patch);
 
-            if (_preReleases is not null)
+            if (_preReleases.Length > 0)
             {
                 sb.Append('-').SimpleAppend(_preReleases[0]);
                 int length = _preReleases.Length;
                 for (int i = 0; i < length; i++)
                     sb.Append(',').SimpleAppend(_preReleases[i]);
             }
-            if (_buildMetadata is not null)
+            if (_buildMetadata.Length > 0)
             {
                 sb.Append('+').Append(_buildMetadata[0]);
                 int length = _buildMetadata.Length;

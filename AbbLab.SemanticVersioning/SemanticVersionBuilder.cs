@@ -192,9 +192,9 @@ namespace AbbLab.SemanticVersioning
             _major = version.Major;
             _minor = version.Minor;
             _patch = version.Patch;
-            if (version._preReleases is not null && version._preReleases.Length > 0)
+            if (version._preReleases.Length > 0)
                 _preReleases = new List<SemanticPreRelease>(version._preReleases);
-            if (version._buildMetadata is not null && version._buildMetadata.Length > 0)
+            if (version._buildMetadata.Length > 0)
                 _buildMetadata = new List<string>(version._buildMetadata);
         }
         /// <summary>
