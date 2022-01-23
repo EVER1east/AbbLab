@@ -178,7 +178,8 @@ namespace AbbLab.SemanticVersioning
             }
         }
 
-        private SemanticVersion(int major, int minor, int patch, SemanticPreRelease[]? preReleases, string[]? buildMetadata)
+        // A constructor that is used internally, to minimize memory allocation
+        internal SemanticVersion(int major, int minor, int patch, SemanticPreRelease[]? preReleases, string[]? buildMetadata)
         {
             Major = major;
             Minor = minor;
