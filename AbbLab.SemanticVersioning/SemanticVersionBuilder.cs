@@ -355,10 +355,12 @@ namespace AbbLab.SemanticVersioning
         {
             if (_minor != 0 || _patch != 0 || _preReleases is null || _preReleases.Count is 0)
             {
+                // 1.2.3 → 2.0.0
                 int newMajor = _major + 1;
                 if (newMajor < 0) throw new InvalidOperationException(Exceptions.MajorTooBig);
                 _major = newMajor;
             }
+            // BUT: 1.0.0-alpha → 1.0.0
             _minor = 0;
             _patch = 0;
             _preReleases?.Clear();
@@ -368,10 +370,12 @@ namespace AbbLab.SemanticVersioning
         {
             if (_patch != 0 || _preReleases is null || _preReleases.Count is 0)
             {
+                // 1.2.3 → 1.3.0
                 int newMinor = _minor + 1;
                 if (newMinor < 0) throw new InvalidOperationException(Exceptions.MinorTooBig);
                 _minor = newMinor;
             }
+            // BUT: 1.2.0-alpha → 1.2.0
             _patch = 0;
             _preReleases?.Clear();
             return this;
@@ -380,10 +384,12 @@ namespace AbbLab.SemanticVersioning
         {
             if (_preReleases is null || _preReleases.Count is 0)
             {
+                // 1.2.3 → 1.2.4
                 int newPatch = _patch + 1;
                 if (newPatch < 0) throw new InvalidOperationException(Exceptions.PatchTooBig);
                 _patch = newPatch;
             }
+            // BUT: 1.2.3-alpha → 1.2.3
             _preReleases?.Clear();
             return this;
         }
@@ -396,6 +402,7 @@ namespace AbbLab.SemanticVersioning
         {
             if (_preReleases is null || _preReleases.Count is 0)
             {
+                // 1.2.3 → 1.2.4-0 or 1.2.4-alpha.0
                 _patch++;
                 _preReleases ??= new List<SemanticPreRelease>();
                 _preReleases.Add(preRelease);
@@ -404,6 +411,9 @@ namespace AbbLab.SemanticVersioning
             }
             else if (preRelease == SemanticPreRelease.Zero || _preReleases[0].Equals(preRelease))
             {
+                // increment the right-most numeric pre-release identifier:
+                // 1.2.3-4 → 1.2.3-5
+                // 1.2.3-4.alpha.6.beta → 1.2.3-4.alpha.7.beta
                 for (int i = _preReleases.Count - 1; i >= 0; i--)
                     if (_preReleases[i].IsNumeric)
                     {
@@ -412,12 +422,14 @@ namespace AbbLab.SemanticVersioning
                         _preReleases[i] = new SemanticPreRelease(newNumber);
                         return this;
                     }
-                _preReleases.Add(preRelease);
-                if (preRelease != SemanticPreRelease.Zero)
-                    _preReleases.Add(SemanticPreRelease.Zero);
+                // if there are no numeric pre-release identifiers:
+                // 1.2.3-alpha → 1.2.3-alpha.0
+                _preReleases.Add(SemanticPreRelease.Zero);
             }
             else
             {
+                // if the specified pre-release identifier is different from the current one:
+                // 1.2.3-alpha.5 (beta) → 1.2.3-beta.0
                 _preReleases.Clear();
                 _preReleases.Add(preRelease);
                 _preReleases.Add(SemanticPreRelease.Zero);
@@ -431,6 +443,7 @@ namespace AbbLab.SemanticVersioning
             => IncrementPreMajor(identifier is null ? SemanticPreRelease.Zero : SemanticPreRelease.Parse(identifier));
         public SemanticVersionBuilder IncrementPreMajor(SemanticPreRelease preRelease)
         {
+            // 1.2.3-alpha → 2.0.0-0 or 2.0.0-beta.0
             int newMajor = _major + 1;
             if (newMajor < 0) throw new InvalidOperationException(Exceptions.MajorTooBig);
             _major = newMajor;
@@ -450,6 +463,7 @@ namespace AbbLab.SemanticVersioning
             => IncrementPreMinor(identifier is null ? SemanticPreRelease.Zero : SemanticPreRelease.Parse(identifier));
         public SemanticVersionBuilder IncrementPreMinor(SemanticPreRelease preRelease)
         {
+            // 1.2.3-alpha → 1.3.0-0 or 1.3.0-beta.0
             int newMinor = _minor + 1;
             if (newMinor < 0) throw new InvalidOperationException(Exceptions.MinorTooBig);
             _minor = newMinor;
@@ -468,6 +482,7 @@ namespace AbbLab.SemanticVersioning
             => IncrementPrePatch(identifier is null ? SemanticPreRelease.Zero : SemanticPreRelease.Parse(identifier));
         public SemanticVersionBuilder IncrementPrePatch(SemanticPreRelease preRelease)
         {
+            // 1.2.3-alpha → 1.2.4-0 or 1.2.4-beta.0
             int newPatch = _patch + 1;
             if (newPatch < 0) throw new InvalidOperationException(Exceptions.PatchTooBig);
             _patch = newPatch;
