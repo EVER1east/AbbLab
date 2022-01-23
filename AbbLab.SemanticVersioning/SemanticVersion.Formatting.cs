@@ -5,6 +5,10 @@ namespace AbbLab.SemanticVersioning
 {
     public partial class SemanticVersion : IFormattable
     {
+        /// <summary>
+        ///   <para>Returns the string representation of this semantic version.</para>
+        /// </summary>
+        /// <returns>The string representation of this semantic version.</returns>
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
@@ -28,6 +32,11 @@ namespace AbbLab.SemanticVersioning
             }
             return sb.ToString();
         }
+        /// <summary>
+        ///   <para>Converts this semantic version to its equivalent string representation, using the specified <paramref name="format"/>.</para>
+        /// </summary>
+        /// <param name="format">The format to use.</param>
+        /// <returns>The string representation of this semantic version, as specified by <paramref name="format"/>.</returns>
         public string ToString(string? format)
         {
             if (format is null or "G" or "g") return ToString();
