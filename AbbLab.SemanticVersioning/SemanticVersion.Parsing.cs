@@ -8,16 +8,40 @@ namespace AbbLab.SemanticVersioning
 {
     public partial class SemanticVersion
     {
+        /// <summary>
+        ///   <para>Converts the specified string representation of a semantic version to an equivalent <see cref="SemanticVersion"/> object.</para>
+        /// </summary>
+        /// <param name="text">The string representation of a semantic version.</param>
+        /// <returns>A value that is equivalent to the semantic version specified in the <paramref name="text"/>.</returns>
+        /// <exception cref="ArgumentException"><paramref name="text"/> does not represent a valid semantic version.</exception>
         [Pure] public static SemanticVersion Parse(string text)
             => Parse(text.AsSpan());
+        /// <summary>
+        ///   <para>Converts the specified read-only span of characters representing a semantic version to an equivalent <see cref="SemanticVersion"/> object.</para>
+        /// </summary>
+        /// <param name="text">The read-only span of characters representing a semantic version.</param>
+        /// <returns>A value that is equivalent to the semantic version specified in the <paramref name="text"/>.</returns>
+        /// <exception cref="ArgumentException"><paramref name="text"/> does not represent a valid semantic version.</exception>
         [Pure] public static SemanticVersion Parse(ReadOnlySpan<char> text)
         {
             SemanticErrorCode code = StrictParse(text, out SemanticVersion? version);
             if (code != SemanticErrorCode.Success) throw new ArgumentException(code.GetErrorMessage(), nameof(text));
             return version!;
         }
+        /// <summary>
+        ///   <para>Tries to convert the specified string representation of a semantic version to an equivalent <see cref="SemanticVersion"/> object, and returns a value that indicates whether the conversion succeeded.</para>
+        /// </summary>
+        /// <param name="text">The string representation of a semantic version.</param>
+        /// <param name="version">When this method returns, contains the <see cref="SemanticVersion"/> equivalent of the semantic version specified in the <paramref name="text"/>, if the conversion succeeded, or <see langword="null"/> if the conversion failed.</param>
+        /// <returns><see langword="true"/>, if the <paramref name="text"/> parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         [Pure] public static bool TryParse(string text, [NotNullWhen(true)] out SemanticVersion? version)
             => TryParse(text.AsSpan(), out version);
+        /// <summary>
+        ///   <para>Tries to convert the specified read-only span of characters representing a semantic version to an equivalent <see cref="SemanticVersion"/> object, and returns a value that indicates whether the conversion succeeded.</para>
+        /// </summary>
+        /// <param name="text">The read-only span of characters representing a semantic version.</param>
+        /// <param name="version">When this method returns, contains the <see cref="SemanticVersion"/> equivalent of the semantic version specified in the <paramref name="text"/>, if the conversion succeeded, or <see langword="null"/> if the conversion failed.</param>
+        /// <returns><see langword="true"/>, if the <paramref name="text"/> parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         [Pure] public static bool TryParse(ReadOnlySpan<char> text, [NotNullWhen(true)] out SemanticVersion? version)
         {
             SemanticErrorCode code = StrictParse(text, out SemanticVersion? result);
@@ -108,8 +132,22 @@ namespace AbbLab.SemanticVersioning
             return SemanticErrorCode.Success;
         }
 
+        /// <summary>
+        ///   <para>Converts the specified string representation of a semantic version to an equivalent <see cref="SemanticVersion"/> object using the specified parsing <paramref name="options"/>.</para>
+        /// </summary>
+        /// <param name="text">The string representation of a semantic version.</param>
+        /// <param name="options">The semantic version parsing options to use.</param>
+        /// <returns>A value that is equivalent to the semantic version specified in the <paramref name="text"/>.</returns>
+        /// <exception cref="ArgumentException"><paramref name="text"/> does not represent a valid semantic version.</exception>
         [Pure] public static SemanticVersion Parse(string text, SemanticOptions options)
             => Parse(text.AsSpan(), options);
+        /// <summary>
+        ///   <para>Converts the specified read-only span of characters representing a semantic version to an equivalent <see cref="SemanticVersion"/> object using the specified parsing <paramref name="options"/>.</para>
+        /// </summary>
+        /// <param name="text">The read-only span of characters representing a semantic version.</param>
+        /// <param name="options">The semantic version parsing options to use.</param>
+        /// <returns>A value that is equivalent to the semantic version specified in the <paramref name="text"/>.</returns>
+        /// <exception cref="ArgumentException"><paramref name="text"/> does not represent a valid semantic version.</exception>
         [Pure] public static SemanticVersion Parse(ReadOnlySpan<char> text, SemanticOptions options)
         {
             if (options == SemanticOptions.Strict) return Parse(text);
@@ -129,8 +167,22 @@ namespace AbbLab.SemanticVersioning
 
             return version!;
         }
+        /// <summary>
+        ///   <para>Tries to convert the specified string representation of a semantic version to an equivalent <see cref="SemanticVersion"/> object using the specified parsing <paramref name="options"/>, and returns a value that indicates whether the conversion succeeded.</para>
+        /// </summary>
+        /// <param name="text">The string representation of a semantic version.</param>
+        /// <param name="options">The semantic version parsing options to use.</param>
+        /// <param name="version">When this method returns, contains the <see cref="SemanticVersion"/> equivalent of the semantic version specified in the <paramref name="text"/>, if the conversion succeeded, or <see langword="null"/> if the conversion failed.</param>
+        /// <returns><see langword="true"/>, if the <paramref name="text"/> parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         [Pure] public static bool TryParse(string text, SemanticOptions options, [NotNullWhen(true)] out SemanticVersion? version)
             => TryParse(text.AsSpan(), options, out version);
+        /// <summary>
+        ///   <para>Tries to convert the specified read-only span of characters representing a semantic version to an equivalent <see cref="SemanticVersion"/> object using the specified parsing <paramref name="options"/>, and returns a value that indicates whether the conversion succeeded.</para>
+        /// </summary>
+        /// <param name="text">The read-only span of characters representing a semantic version.</param>
+        /// <param name="options">The semantic version parsing options to use.</param>
+        /// <param name="version">When this method returns, contains the <see cref="SemanticVersion"/> equivalent of the semantic version specified in the <paramref name="text"/>, if the conversion succeeded, or <see langword="null"/> if the conversion failed.</param>
+        /// <returns><see langword="true"/>, if the <paramref name="text"/> parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         [Pure] public static bool TryParse(ReadOnlySpan<char> text, SemanticOptions options, [NotNullWhen(true)] out SemanticVersion? version)
         {
             if (options == SemanticOptions.Strict) return TryParse(text, out version);
