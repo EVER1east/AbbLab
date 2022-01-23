@@ -10,7 +10,7 @@ namespace AbbLab.SemanticVersioning
     /// <summary>
     ///   <para>Represents a semantic version.</para>
     /// </summary>
-    public partial class SemanticVersion
+    public sealed partial class SemanticVersion
     {
         /// <summary>
         ///   <para>Gets the major version component of the semantic version.</para>
