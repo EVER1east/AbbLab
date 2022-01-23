@@ -351,6 +351,11 @@ namespace AbbLab.SemanticVersioning
             return this;
         }
 
+        /// <summary>
+        ///   <para>Increments the major version of this instance.</para>
+        /// </summary>
+        /// <returns>A reference to this instance after the operation.</returns>
+        /// <exception cref="InvalidOperationException"><see cref="Major"/> is equal to <see cref="int.MaxValue"/> and cannot be incremented.</exception>
         public SemanticVersionBuilder IncrementMajor()
         {
             if (_minor != 0 || _patch != 0 || _preReleases is null || _preReleases.Count is 0)
@@ -366,6 +371,11 @@ namespace AbbLab.SemanticVersioning
             _preReleases?.Clear();
             return this;
         }
+        /// <summary>
+        ///   <para>Increments the minor version of this instance.</para>
+        /// </summary>
+        /// <returns>A reference to this instance after the operation.</returns>
+        /// <exception cref="InvalidOperationException"><see cref="Minor"/> is equal to <see cref="int.MaxValue"/> and cannot be incremented.</exception>
         public SemanticVersionBuilder IncrementMinor()
         {
             if (_patch != 0 || _preReleases is null || _preReleases.Count is 0)
@@ -380,6 +390,11 @@ namespace AbbLab.SemanticVersioning
             _preReleases?.Clear();
             return this;
         }
+        /// <summary>
+        ///   <para>Increments the patch version of this instance.</para>
+        /// </summary>
+        /// <returns>A reference to this instance after the operation.</returns>
+        /// <exception cref="InvalidOperationException"><see cref="Patch"/> is equal to <see cref="int.MaxValue"/> and cannot be incremented.</exception>
         public SemanticVersionBuilder IncrementPatch()
         {
             if (_preReleases is null || _preReleases.Count is 0)
@@ -394,10 +409,28 @@ namespace AbbLab.SemanticVersioning
             return this;
         }
 
+        /// <summary>
+        ///   <para>Increments the right-most numeric pre-release identifier, or appends <c>0</c> if there isn't one.</para>
+        /// </summary>
+        /// <returns>A reference to this instance after the operation.</returns>
+        /// <exception cref="InvalidOperationException">The numeric value of the right-most numeric pre-release identifier is equal to <see cref="int.MaxValue"/> and cannot be incremented.</exception>
         public SemanticVersionBuilder IncrementPreRelease()
             => IncrementPreRelease(SemanticPreRelease.Zero);
+        /// <summary>
+        ///   <para>If the left-most pre-release identifier is not the same as the one specified (and the specified one is not <c>0</c>), replaces the pre-release identifiers with <c><paramref name="identifier"/>.0</c>; otherwise, increments the right-most numeric pre-release identifier, or appends <c>0</c> if there isn't one.</para>
+        /// </summary>
+        /// <param name="identifier">The string representation of a pre-release identifier to use.</param>
+        /// <returns>A reference to this instance after the operation.</returns>
+        /// <exception cref="ArgumentException"><paramref name="identifier"/> does not represent a valid pre-release identifier.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="Patch"/> or the numeric value of the right-most numeric pre-release identifier is equal to <see cref="int.MaxValue"/> and cannot be incremented.</exception>
         public SemanticVersionBuilder IncrementPreRelease(string? identifier)
             => IncrementPreRelease(identifier is null ? SemanticPreRelease.Zero : SemanticPreRelease.Parse(identifier));
+        /// <summary>
+        ///   <para>If the left-most pre-release identifier is not the same as the one specified (and the specified one is not <c>0</c>), replaces the pre-release identifiers with <c><paramref name="preRelease"/>.0</c>; otherwise, increments the right-most numeric pre-release identifier, or appends <c>0</c> if there isn't one.</para>
+        /// </summary>
+        /// <param name="preRelease">The pre-release identifier to use.</param>
+        /// <returns>A reference to this instance after the operation.</returns>
+        /// <exception cref="InvalidOperationException"><see cref="Patch"/> or the numeric value of the right-most numeric pre-release identifier is equal to <see cref="int.MaxValue"/> and cannot be incremented.</exception>
         public SemanticVersionBuilder IncrementPreRelease(SemanticPreRelease preRelease)
         {
             if (_preReleases is null || _preReleases.Count is 0)
@@ -437,10 +470,28 @@ namespace AbbLab.SemanticVersioning
             return this;
         }
 
+        /// <summary>
+        ///   <para>Increments the major version of this instance, adding a <c>0</c> pre-release identifier.</para>
+        /// </summary>
+        /// <returns>A reference to this instance after the operation.</returns>
+        /// <exception cref="InvalidOperationException"><see cref="Major"/> is equal to <see cref="int.MaxValue"/> and cannot be incremented.</exception>
         public SemanticVersionBuilder IncrementPreMajor()
             => IncrementPreMajor(SemanticPreRelease.Zero);
+        /// <summary>
+        ///   <para>Increments the major version of this instance, adding <c><paramref name="identifier"/>.0</c> pre-release identifiers, or just <c>0</c> if <paramref name="identifier"/> is <c>0</c>.</para>
+        /// </summary>
+        /// <param name="identifier">The string representation of a pre-release identifier to use.</param>
+        /// <returns>A reference to this instance after the operation.</returns>
+        /// <exception cref="ArgumentException"><paramref name="identifier"/> does not represent a valid pre-release identifier.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="Major"/> is equal to <see cref="int.MaxValue"/> and cannot be incremented.</exception>
         public SemanticVersionBuilder IncrementPreMajor(string? identifier)
             => IncrementPreMajor(identifier is null ? SemanticPreRelease.Zero : SemanticPreRelease.Parse(identifier));
+        /// <summary>
+        ///   <para>Increments the major version of this instance, adding <c><paramref name="preRelease"/>.0</c> pre-release identifiers, or just <c>0</c> if <paramref name="preRelease"/> is <c>0</c>.</para>
+        /// </summary>
+        /// <param name="preRelease">The pre-release identifier to use.</param>
+        /// <returns>A reference to this instance after the operation.</returns>
+        /// <exception cref="InvalidOperationException"><see cref="Major"/> is equal to <see cref="int.MaxValue"/> and cannot be incremented.</exception>
         public SemanticVersionBuilder IncrementPreMajor(SemanticPreRelease preRelease)
         {
             // 1.2.3-alpha → 2.0.0-0 or 2.0.0-beta.0
@@ -457,10 +508,28 @@ namespace AbbLab.SemanticVersioning
             return this;
         }
 
+        /// <summary>
+        ///   <para>Increments the minor version of this instance, adding a <c>0</c> pre-release identifier.</para>
+        /// </summary>
+        /// <returns>A reference to this instance after the operation.</returns>
+        /// <exception cref="InvalidOperationException"><see cref="Minor"/> is equal to <see cref="int.MaxValue"/> and cannot be incremented.</exception>
         public SemanticVersionBuilder IncrementPreMinor()
             => IncrementPreMinor(SemanticPreRelease.Zero);
+        /// <summary>
+        ///   <para>Increments the minor version of this instance, adding <c><paramref name="identifier"/>.0</c> pre-release identifiers, or just <c>0</c> if <paramref name="identifier"/> is <c>0</c>.</para>
+        /// </summary>
+        /// <param name="identifier">The string representation of a pre-release identifier to use.</param>
+        /// <returns>A reference to this instance after the operation.</returns>
+        /// <exception cref="ArgumentException"><paramref name="identifier"/> does not represent a valid pre-release identifier.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="Minor"/> is equal to <see cref="int.MaxValue"/> and cannot be incremented.</exception>
         public SemanticVersionBuilder IncrementPreMinor(string? identifier)
             => IncrementPreMinor(identifier is null ? SemanticPreRelease.Zero : SemanticPreRelease.Parse(identifier));
+        /// <summary>
+        ///   <para>Increments the minor version of this instance, adding <c><paramref name="preRelease"/>.0</c> pre-release identifiers, or just <c>0</c> if <paramref name="preRelease"/> is <c>0</c>.</para>
+        /// </summary>
+        /// <param name="preRelease">The pre-release identifier to use.</param>
+        /// <returns>A reference to this instance after the operation.</returns>
+        /// <exception cref="InvalidOperationException"><see cref="Minor"/> is equal to <see cref="int.MaxValue"/> and cannot be incremented.</exception>
         public SemanticVersionBuilder IncrementPreMinor(SemanticPreRelease preRelease)
         {
             // 1.2.3-alpha → 1.3.0-0 or 1.3.0-beta.0
@@ -476,10 +545,28 @@ namespace AbbLab.SemanticVersioning
             return this;
         }
 
+        /// <summary>
+        ///   <para>Increments the patch version of this instance, adding a <c>0</c> pre-release identifier.</para>
+        /// </summary>
+        /// <returns>A reference to this instance after the operation.</returns>
+        /// <exception cref="InvalidOperationException"><see cref="Patch"/> is equal to <see cref="int.MaxValue"/> and cannot be incremented.</exception>
         public SemanticVersionBuilder IncrementPrePatch()
             => IncrementPrePatch(SemanticPreRelease.Zero);
+        /// <summary>
+        ///   <para>Increments the patch version of this instance, adding <c><paramref name="identifier"/>.0</c> pre-release identifiers, or just <c>0</c> if <paramref name="identifier"/> is <c>0</c>.</para>
+        /// </summary>
+        /// <param name="identifier">The string representation of a pre-release identifier to use.</param>
+        /// <returns>A reference to this instance after the operation.</returns>
+        /// <exception cref="ArgumentException"><paramref name="identifier"/> does not represent a valid pre-release identifier.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="Patch"/> is equal to <see cref="int.MaxValue"/> and cannot be incremented.</exception>
         public SemanticVersionBuilder IncrementPrePatch(string? identifier)
             => IncrementPrePatch(identifier is null ? SemanticPreRelease.Zero : SemanticPreRelease.Parse(identifier));
+        /// <summary>
+        ///   <para>Increments the patch version of this instance, adding <c><paramref name="preRelease"/>.0</c> pre-release identifiers, or just <c>0</c> if <paramref name="preRelease"/> is <c>0</c>.</para>
+        /// </summary>
+        /// <param name="preRelease">The pre-release identifier to use.</param>
+        /// <returns>A reference to this instance after the operation.</returns>
+        /// <exception cref="InvalidOperationException"><see cref="Patch"/> is equal to <see cref="int.MaxValue"/> and cannot be incremented.</exception>
         public SemanticVersionBuilder IncrementPrePatch(SemanticPreRelease preRelease)
         {
             // 1.2.3-alpha → 1.2.4-0 or 1.2.4-beta.0
