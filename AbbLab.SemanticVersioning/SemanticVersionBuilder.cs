@@ -351,5 +351,133 @@ namespace AbbLab.SemanticVersioning
             return this;
         }
 
+        public SemanticVersionBuilder IncrementMajor()
+        {
+            if (_minor != 0 || _patch != 0 || _preReleases is null || _preReleases.Count is 0)
+            {
+                int newMajor = _major + 1;
+                if (newMajor < 0) throw new InvalidOperationException(Exceptions.MajorTooBig);
+                _major = newMajor;
+            }
+            _minor = 0;
+            _patch = 0;
+            _preReleases?.Clear();
+            return this;
+        }
+        public SemanticVersionBuilder IncrementMinor()
+        {
+            if (_patch != 0 || _preReleases is null || _preReleases.Count is 0)
+            {
+                int newMinor = _minor + 1;
+                if (newMinor < 0) throw new InvalidOperationException(Exceptions.MinorTooBig);
+                _minor = newMinor;
+            }
+            _patch = 0;
+            _preReleases?.Clear();
+            return this;
+        }
+        public SemanticVersionBuilder IncrementPatch()
+        {
+            if (_preReleases is null || _preReleases.Count is 0)
+            {
+                int newPatch = _patch + 1;
+                if (newPatch < 0) throw new InvalidOperationException(Exceptions.PatchTooBig);
+                _patch = newPatch;
+            }
+            _preReleases?.Clear();
+            return this;
+        }
+
+        public SemanticVersionBuilder IncrementPreRelease()
+            => IncrementPreRelease(SemanticPreRelease.Zero);
+        public SemanticVersionBuilder IncrementPreRelease(string? identifier)
+            => IncrementPreRelease(identifier is null ? SemanticPreRelease.Zero : SemanticPreRelease.Parse(identifier));
+        public SemanticVersionBuilder IncrementPreRelease(SemanticPreRelease preRelease)
+        {
+            if (_preReleases is null || _preReleases.Count is 0)
+            {
+                _patch++;
+                _preReleases ??= new List<SemanticPreRelease>();
+                _preReleases.Add(preRelease);
+                if (preRelease != SemanticPreRelease.Zero)
+                    _preReleases.Add(SemanticPreRelease.Zero);
+            }
+            else if (preRelease == SemanticPreRelease.Zero || _preReleases[0].Equals(preRelease))
+            {
+                for (int i = _preReleases.Count - 1; i >= 0; i--)
+                    if (_preReleases[i].IsNumeric)
+                    {
+                        int newNumber = _preReleases[i].Number + 1;
+                        if (newNumber < 0) throw new InvalidOperationException(Exceptions.PreReleaseTooBig);
+                        _preReleases[i] = new SemanticPreRelease(newNumber);
+                        return this;
+                    }
+                _preReleases.Add(preRelease);
+                if (preRelease != SemanticPreRelease.Zero)
+                    _preReleases.Add(SemanticPreRelease.Zero);
+            }
+            else
+            {
+                _preReleases.Clear();
+                _preReleases.Add(preRelease);
+                _preReleases.Add(SemanticPreRelease.Zero);
+            }
+            return this;
+        }
+
+        public SemanticVersionBuilder IncrementPreMajor()
+            => IncrementPreMajor(SemanticPreRelease.Zero);
+        public SemanticVersionBuilder IncrementPreMajor(string? identifier)
+            => IncrementPreMajor(identifier is null ? SemanticPreRelease.Zero : SemanticPreRelease.Parse(identifier));
+        public SemanticVersionBuilder IncrementPreMajor(SemanticPreRelease preRelease)
+        {
+            int newMajor = _major + 1;
+            if (newMajor < 0) throw new InvalidOperationException(Exceptions.MajorTooBig);
+            _major = newMajor;
+            _minor = 0;
+            _patch = 0;
+            if (_preReleases is not null) _preReleases.Clear();
+            else _preReleases = new List<SemanticPreRelease>();
+            _preReleases.Add(preRelease);
+            if (preRelease != SemanticPreRelease.Zero)
+                _preReleases.Add(SemanticPreRelease.Zero);
+            return this;
+        }
+
+        public SemanticVersionBuilder IncrementPreMinor()
+            => IncrementPreMinor(SemanticPreRelease.Zero);
+        public SemanticVersionBuilder IncrementPreMinor(string? identifier)
+            => IncrementPreMinor(identifier is null ? SemanticPreRelease.Zero : SemanticPreRelease.Parse(identifier));
+        public SemanticVersionBuilder IncrementPreMinor(SemanticPreRelease preRelease)
+        {
+            int newMinor = _minor + 1;
+            if (newMinor < 0) throw new InvalidOperationException(Exceptions.MinorTooBig);
+            _minor = newMinor;
+            _patch = 0;
+            if (_preReleases is not null) _preReleases.Clear();
+            else _preReleases = new List<SemanticPreRelease>();
+            _preReleases.Add(preRelease);
+            if (preRelease != SemanticPreRelease.Zero)
+                _preReleases.Add(SemanticPreRelease.Zero);
+            return this;
+        }
+
+        public SemanticVersionBuilder IncrementPrePatch()
+            => IncrementPrePatch(SemanticPreRelease.Zero);
+        public SemanticVersionBuilder IncrementPrePatch(string? identifier)
+            => IncrementPrePatch(identifier is null ? SemanticPreRelease.Zero : SemanticPreRelease.Parse(identifier));
+        public SemanticVersionBuilder IncrementPrePatch(SemanticPreRelease preRelease)
+        {
+            int newPatch = _patch + 1;
+            if (newPatch < 0) throw new InvalidOperationException(Exceptions.PatchTooBig);
+            _patch = newPatch;
+            if (_preReleases is not null) _preReleases.Clear();
+            else _preReleases = new List<SemanticPreRelease>();
+            _preReleases.Add(preRelease);
+            if (preRelease != SemanticPreRelease.Zero)
+                _preReleases.Add(SemanticPreRelease.Zero);
+            return this;
+        }
+
     }
 }
