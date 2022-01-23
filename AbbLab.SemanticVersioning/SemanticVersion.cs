@@ -10,7 +10,7 @@ namespace AbbLab.SemanticVersioning
     /// <summary>
     ///   <para>Represents a semantic version.</para>
     /// </summary>
-    public sealed partial class SemanticVersion
+    public sealed partial class SemanticVersion : IEquatable<SemanticVersion>, IComparable<SemanticVersion>, IComparable
     {
         /// <summary>
         ///   <para>Gets the major version component of the semantic version.</para>
@@ -210,6 +210,111 @@ namespace AbbLab.SemanticVersioning
         /// <param name="semanticVersion">The <see cref="SemanticVersion"/> to convert to a <see cref="Version"/>.</param>
         public static explicit operator Version(SemanticVersion semanticVersion)
             => new Version(semanticVersion.Major, semanticVersion.Minor, semanticVersion.Patch);
+
+        /// <inheritdoc/>
+        public bool Equals(SemanticVersion? other)
+        {
+            if (ReferenceEquals(this, other)) return true;
+            if (other is null || Major != other.Major || Minor != other.Minor || Patch != other.Patch) return false;
+            int length = _preReleases?.Length ?? 0;
+            if (length != (other._preReleases?.Length ?? 0)) return false;
+            for (int i = 0; i < length; i++)
+                if (!_preReleases![i].Equals(other._preReleases![i]))
+                    return false;
+            return true;
+        }
+        /// <inheritdoc/>
+        public override bool Equals(object? obj) => Equals(obj as SemanticVersion);
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            if (_preReleases is null) return HashCode.Combine(Major, Minor, Patch);
+            HashCode hash = new HashCode();
+            hash.Add(Major);
+            hash.Add(Minor);
+            hash.Add(Patch);
+            for (int i = 0, length = _preReleases.Length; i < length; i++)
+                hash.Add(_preReleases[i]);
+            return hash.ToHashCode();
+        }
+
+        /// <inheritdoc/>
+        public int CompareTo(SemanticVersion? other)
+        {
+            if (ReferenceEquals(this, other)) return 0;
+            if (other is null) return 1;
+
+            int res = Major.CompareTo(other.Major);
+            if (res is not 0) return res;
+            res = Minor.CompareTo(other.Minor);
+            if (res is not 0) return res;
+            res = Patch.CompareTo(other.Patch);
+            if (res is not 0) return res;
+
+            int thisLength = _preReleases?.Length ?? 0;
+            int otherLength = other._preReleases?.Length ?? 0;
+            if (thisLength is 0 && otherLength > 0) return 1;
+            if (thisLength > 0 && otherLength is 0) return -1;
+            int length = Math.Max(thisLength, otherLength);
+            for (int i = 0; i < length; i++)
+            {
+                if (i == thisLength) return i == otherLength ? 0 : -1;
+                if (i == otherLength) return 1;
+                res = _preReleases![i].CompareTo(other._preReleases![i]);
+                if (res is not 0) return res;
+            }
+            return 0;
+        }
+        int IComparable.CompareTo(object? obj)
+        {
+            if (obj is null) return 1;
+            if (obj is SemanticVersion other) return CompareTo(other);
+            throw new ArgumentException($"The object must be of type {nameof(SemanticVersion)}.", nameof(obj));
+        }
+
+        /// <summary>
+        ///   <para>Determines whether two semantic versions are equal.</para>
+        /// </summary>
+        /// <param name="a">The first semantic version to compare.</param>
+        /// <param name="b">The second semantic version to compare.</param>
+        /// <returns><see langword="true"/>, if <paramref name="a"/> and <paramref name="b"/> are equal; otherwise, <see langword="false"/>.</returns>
+        public static bool operator ==(SemanticVersion? a, SemanticVersion? b) => a is null ? b is null : a.Equals(b);
+        /// <summary>
+        ///   <para>Determines whether two semantic versions are not equal.</para>
+        /// </summary>
+        /// <param name="a">The first semantic version to compare.</param>
+        /// <param name="b">The second semantic version to compare.</param>
+        /// <returns><see langword="true"/>, if <paramref name="a"/> and <paramref name="b"/> are not equal; otherwise, <see langword="false"/>.</returns>
+        public static bool operator !=(SemanticVersion? a, SemanticVersion? b) => a is null ? b is not null : !a.Equals(b);
+
+        /// <summary>
+        ///   <para>Determines whether one semantic version is greater than another.</para>
+        /// </summary>
+        /// <param name="a">The first semantic version to compare.</param>
+        /// <param name="b">The second semantic version to compare.</param>
+        /// <returns><see langword="true"/>, if <paramref name="a"/> is greater than <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
+        public static bool operator >(SemanticVersion? a, SemanticVersion? b) => a is not null && a.CompareTo(b) > 0;
+        /// <summary>
+        ///   <para>Determines whether one semantic version is less than another.</para>
+        /// </summary>
+        /// <param name="a">The first semantic version to compare.</param>
+        /// <param name="b">The second semantic version to compare.</param>
+        /// <returns><see langword="true"/>, if <paramref name="a"/> is less than <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
+        public static bool operator <(SemanticVersion? a, SemanticVersion? b) => a is null ? b is not null : a.CompareTo(b) < 0;
+        /// <summary>
+        ///   <para>Determines whether one semantic version is greater than or equal to another.</para>
+        /// </summary>
+        /// <param name="a">The first semantic version to compare.</param>
+        /// <param name="b">The second semantic version to compare.</param>
+        /// <returns><see langword="true"/>, if <paramref name="a"/> is greater than or equal to <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
+        public static bool operator >=(SemanticVersion? a, SemanticVersion? b) => a is null ? b is null : a.CompareTo(b) >= 0;
+        /// <summary>
+        ///   <para>Determines whether one semantic version is less than or equal to another.</para>
+        /// </summary>
+        /// <param name="a">The first semantic version to compare.</param>
+        /// <param name="b">The second semantic version to compare.</param>
+        /// <returns><see langword="true"/>, if <paramref name="a"/> is less than or equal to <paramref name="b"/>; otherwise, <see langword="false"/>.</returns>
+        public static bool operator <=(SemanticVersion? a, SemanticVersion? b) => a is null || a.CompareTo(b) <= 0;
 
 
 
