@@ -436,7 +436,9 @@ namespace AbbLab.SemanticVersioning
             if (_preReleases is null || _preReleases.Count is 0)
             {
                 // 1.2.3 → 1.2.4-0 or 1.2.4-alpha.0
-                _patch++;
+                int newPatch = _patch + 1;
+                if (newPatch < 0) throw new InvalidOperationException(Exceptions.PatchTooBig);
+                _patch = newPatch;
                 _preReleases ??= new List<SemanticPreRelease>();
                 _preReleases.Add(preRelease);
                 if (preRelease != SemanticPreRelease.Zero)
