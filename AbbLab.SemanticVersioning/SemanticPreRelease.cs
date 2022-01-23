@@ -85,7 +85,6 @@ namespace AbbLab.SemanticVersioning
         ///   <para>The pre-release identifier with a numeric value of <c>0</c>.</para>
         /// </summary>
         public static readonly SemanticPreRelease Zero = new SemanticPreRelease(0);
-        internal static readonly SemanticPreRelease[] ZeroArray = { Zero };
 
         /// <inheritdoc/>
         [Pure] public bool Equals(SemanticPreRelease other)
