@@ -203,6 +203,16 @@ namespace AbbLab.SemanticVersioning
             _preReleases = Array.Empty<SemanticPreRelease>();
             _buildMetadata = Array.Empty<string>();
         }
+        public SemanticVersion(PartialVersion partialVersion)
+        {
+            Major = partialVersion.Major.GetValueOrZero();
+            Minor = partialVersion.Minor.GetValueOrZero();
+            Patch = partialVersion.Patch.GetValueOrZero();
+            _preReleases = partialVersion._preReleases;
+            _preReleasesReadonly = partialVersion._preReleasesReadonly;
+            _buildMetadata = partialVersion._buildMetadata;
+            _buildMetadataReadonly = partialVersion._buildMetadataReadonly;
+        }
         /// <summary>
         ///   <para>Defines an explicit conversion of a <see cref="Version"/> to a <see cref="SemanticVersion"/>.</para>
         /// </summary>
@@ -215,6 +225,8 @@ namespace AbbLab.SemanticVersioning
         /// <param name="semanticVersion">The <see cref="SemanticVersion"/> to convert to a <see cref="Version"/>.</param>
         [Pure] public static explicit operator Version(SemanticVersion semanticVersion)
             => new Version(semanticVersion.Major, semanticVersion.Minor, semanticVersion.Patch);
+        [Pure] public static explicit operator SemanticVersion(PartialVersion partialVersion)
+            => new SemanticVersion(partialVersion);
 
         /// <inheritdoc/>
         [Pure] public bool Equals(SemanticVersion? other)

@@ -69,5 +69,7 @@ namespace AbbLab.SemanticVersioning
             _ => Util.ToString(_value),
         };
 
+        [Pure] public int GetValueOrZero() => _value > -1 ? _value : 0;
+
     }
 }

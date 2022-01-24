@@ -62,6 +62,10 @@ namespace AbbLab.SemanticVersioning
                               [InstantHandle] IEnumerable<string>? preReleases,
                               [InstantHandle] IEnumerable<string>? buildMetadata)
         {
+            if (major.IsOmitted && !minor.IsOmitted) throw new ArgumentException();
+            if (minor.IsOmitted && !patch.IsOmitted) throw new ArgumentException();
+            if (major.IsWildcard && minor.IsNumeric) throw new ArgumentException();
+            if (minor.IsWildcard && patch.IsNumeric) throw new ArgumentException();
             Major = major;
             Minor = minor;
             Patch = patch;
@@ -76,6 +80,10 @@ namespace AbbLab.SemanticVersioning
                               [InstantHandle] IEnumerable<SemanticPreRelease>? preReleases,
                               [InstantHandle] IEnumerable<string>? buildMetadata)
         {
+            if (major.IsOmitted && !minor.IsOmitted) throw new ArgumentException();
+            if (minor.IsOmitted && !patch.IsOmitted) throw new ArgumentException();
+            if (major.IsWildcard && minor.IsNumeric) throw new ArgumentException();
+            if (minor.IsWildcard && patch.IsNumeric) throw new ArgumentException();
             Major = major;
             Minor = minor;
             Patch = patch;
@@ -121,7 +129,7 @@ namespace AbbLab.SemanticVersioning
         {
             Major = new PartialComponent(systemVersion.Major);
             Minor = new PartialComponent(systemVersion.Minor);
-            Patch = new PartialComponent(Math.Max(systemVersion.Build, 0));
+            Patch = systemVersion.Build > -1 ? new PartialComponent(systemVersion.Build) : PartialComponent.Omitted;
             _preReleases = Array.Empty<SemanticPreRelease>();
             _buildMetadata = Array.Empty<string>();
         }
@@ -165,7 +173,20 @@ namespace AbbLab.SemanticVersioning
             return hash.ToHashCode();
         }
 
-
+        /// <summary>
+        ///   <para>Determines whether two partial semantic versions are equal.</para>
+        /// </summary>
+        /// <param name="a">The first semantic version to compare.</param>
+        /// <param name="b">The second semantic version to compare.</param>
+        /// <returns><see langword="true"/>, if <paramref name="a"/> and <paramref name="b"/> are equal; otherwise, <see langword="false"/>.</returns>
+        [Pure] public static bool operator ==(PartialVersion? a, PartialVersion? b) => a is null ? b is null : a.Equals(b);
+        /// <summary>
+        ///   <para>Determines whether two partial semantic versions are not equal.</para>
+        /// </summary>
+        /// <param name="a">The first semantic version to compare.</param>
+        /// <param name="b">The second semantic version to compare.</param>
+        /// <returns><see langword="true"/>, if <paramref name="a"/> and <paramref name="b"/> are not equal; otherwise, <see langword="false"/>.</returns>
+        [Pure] public static bool operator !=(PartialVersion? a, PartialVersion? b) => a is null ? b is not null : !a.Equals(b);
 
     }
 }
