@@ -267,6 +267,7 @@ namespace AbbLab.SemanticVersioning
             SemanticPreRelease[]? preReleases = null;
             if (parser.Skip('-'))
             {
+                if (innerWhite) parser.SkipWhitespaces();
                 List<SemanticPreRelease> list = new List<SemanticPreRelease>();
                 do
                 {
@@ -275,6 +276,7 @@ namespace AbbLab.SemanticVersioning
                     SemanticErrorCode code = SemanticPreRelease.ParseInternal(identifier, options, out SemanticPreRelease preRelease);
                     if (code != SemanticErrorCode.Success) return Util.Fail(code, out version);
                     list.Add(preRelease);
+                    if (innerWhite) parser.SkipWhitespaces();
                 }
                 while (parser.Skip('.'));
                 preReleases = list.ToArray();
@@ -297,12 +299,14 @@ namespace AbbLab.SemanticVersioning
             string[]? buildMetadata = null;
             if (parser.Skip('+'))
             {
+                if (innerWhite) parser.SkipWhitespaces();
                 List<string> list = new List<string>();
                 do
                 {
                     string identifier = parser.ReadStringWhile(&Util.IsValidCharacter);
                     if (identifier.Length is 0) return Util.Fail(SemanticErrorCode.BuildMetadataNotFound, out version);
                     list.Add(identifier);
+                    if (innerWhite) parser.SkipWhitespaces();
                 }
                 while (parser.Skip('.'));
                 buildMetadata = list.ToArray();
