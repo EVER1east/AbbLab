@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using JetBrains.Annotations;
 
 namespace AbbLab.SemanticVersioning
 {
@@ -9,7 +10,7 @@ namespace AbbLab.SemanticVersioning
         ///   <para>Returns the string representation of this semantic version.</para>
         /// </summary>
         /// <returns>The string representation of this semantic version.</returns>
-        public override string ToString()
+        [Pure] public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             sb.SimpleAppend(Major).Append('.')
@@ -52,7 +53,7 @@ namespace AbbLab.SemanticVersioning
         /// </summary>
         /// <param name="format">The format to use.</param>
         /// <returns>The string representation of this semantic version, as specified by <paramref name="format"/>.</returns>
-        public string ToString(string? format)
+        [Pure] public string ToString(string? format)
         {
             if (format is null or "G" or "g") return ToString();
 

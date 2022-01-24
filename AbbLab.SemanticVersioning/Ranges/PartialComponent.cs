@@ -36,7 +36,7 @@ namespace AbbLab.SemanticVersioning
         public static readonly PartialComponent Omitted = new PartialComponent(-1, false);
         public static readonly PartialComponent Zero = new PartialComponent(0);
 
-        public static PartialComponent GetWildcardComponent(char character) => character switch
+        [Pure] public static PartialComponent GetWildcardComponent(char character) => character switch
         {
             'x' => X, 'X' => CapitalX, '*' => Star,
             _ => throw new ArgumentException("The specified character is not a wildcard character.", nameof(character)),

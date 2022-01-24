@@ -1,7 +1,9 @@
-﻿namespace AbbLab.SemanticVersioning
+﻿using JetBrains.Annotations;
+
+namespace AbbLab.SemanticVersioning
 {
     public interface IAdvancedComparator
     {
-        (PrimitiveComparator, PrimitiveComparator?) ToPrimitives();
+        [Pure] (PrimitiveComparator, PrimitiveComparator?) ToPrimitives();
     }
 }

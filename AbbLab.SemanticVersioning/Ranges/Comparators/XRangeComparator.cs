@@ -1,4 +1,6 @@
-﻿namespace AbbLab.SemanticVersioning
+﻿using JetBrains.Annotations;
+
+namespace AbbLab.SemanticVersioning
 {
     public sealed class XRangeComparator : Comparator, IAdvancedComparator
     {
@@ -8,7 +10,7 @@
 
         public XRangeComparator(PartialVersion version) => Version = version;
 
-        public (PrimitiveComparator, PrimitiveComparator?) ToPrimitives()
+        [Pure] public (PrimitiveComparator, PrimitiveComparator?) ToPrimitives()
         {
             if (primitiveBegin is null)
             {
@@ -47,7 +49,7 @@
             }
             return (primitiveBegin, primitiveEnd);
         }
-        public override bool IsSatisfiedBy(SemanticVersion version, bool includePreReleases)
+        [Pure] public override bool IsSatisfiedBy(SemanticVersion version, bool includePreReleases)
         {
             (PrimitiveComparator begin, PrimitiveComparator? end) = ToPrimitives();
             return begin.IsSatisfiedBy(version, includePreReleases) && (end is null || end.IsSatisfiedBy(version, includePreReleases));

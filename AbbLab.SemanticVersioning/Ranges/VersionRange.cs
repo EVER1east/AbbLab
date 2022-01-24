@@ -86,7 +86,7 @@ namespace AbbLab.SemanticVersioning
         bool ICollection<ComparatorSet>.IsReadOnly => true;
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public IEnumerator<ComparatorSet> GetEnumerator() => ((IEnumerable<ComparatorSet>)_comparatorSets).GetEnumerator();
+        [Pure] public IEnumerator<ComparatorSet> GetEnumerator() => ((IEnumerable<ComparatorSet>)_comparatorSets).GetEnumerator();
 
     }
 }

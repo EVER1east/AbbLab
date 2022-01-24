@@ -1,4 +1,6 @@
-﻿namespace AbbLab.SemanticVersioning
+﻿using JetBrains.Annotations;
+
+namespace AbbLab.SemanticVersioning
 {
     public abstract class PrimitiveComparator : Comparator
     {
@@ -7,7 +9,7 @@
         protected PrimitiveComparator(SemanticVersion comparand) => Comparand = comparand;
 
         protected abstract bool BaseCondition(SemanticVersion version);
-        public override bool IsSatisfiedBy(SemanticVersion version, bool includePreReleases)
+        [Pure] public override bool IsSatisfiedBy(SemanticVersion version, bool includePreReleases)
         {
             // if the version doesn't have pre-releases, compare normally:
             // 1.2.3: >1.2.2, >1.2.3-alpha, >1.0.0-alpha, >1.0.0
