@@ -34,8 +34,21 @@ namespace AbbLab.SemanticVersioning
         }
         /// <summary>
         ///   <para>Converts this semantic version to its equivalent string representation, using the specified <paramref name="format"/>.</para>
-        ///   <para><paramref name="format"/> replaces the following patterns: <c>'M'</c> - major version component; <c>'MM'</c> - major version component, but only if it's greater than zero; the same for minor and patch components with <c>'m'</c>/<c>'mm'</c> and <c>'p'</c>/<c>'pp'</c> accordingly; <c>ppp</c> and <c>'mmm'</c> - pre-release or build metadata identifiers accordingly separated by dots (<c>'.'</c>).</para>
-        ///   <para>Separators, such as dots, hyphens, pluses and spaces (<c>'.'</c>, <c>'-'</c>, <c>'+'</c> and <c>' '</c>) are removed, if the subsequent pattern is omitted (<c>'MM'</c>, <c>'mm'</c>, <c>'pp'</c>, or if there are no pre-release or build metadata identifiers in the version). The patterns can be escaped by inserting <c>'\'</c> before the pattern. Note that you need to insert multiple backslashes in patterns like <c>'mm'</c>, otherwise the method will recognize the last <c>'m'</c> as a pattern.</para>
+        ///   <para>
+        ///     <paramref name="format"/> replaces the following patterns:
+        ///     <c>'M'</c> - major version component;
+        ///     <c>'MM'</c> - major version component, but only if it's greater than zero;
+        ///     the same for minor and patch components with <c>'m'</c>/<c>'mm'</c> and <c>'p'</c>/<c>'pp'</c> accordingly;
+        ///     <c>ppp</c> and <c>'mmm'</c> - pre-release or build metadata identifiers accordingly separated by dots (<c>'.'</c>).
+        ///   </para>
+        ///   <para>
+        ///     Separators, such as dots, hyphens, pluses and spaces (<c>'.'</c>, <c>'-'</c>, <c>'+'</c> and <c>' '</c>) are removed,
+        ///     if the subsequent pattern is omitted (<c>'MM'</c>, <c>'mm'</c>, <c>'pp'</c>, or if there are no pre-release or build
+        ///     metadata identifiers in the version).
+        ///     The patterns can be escaped by inserting <c>'\'</c> before the pattern.
+        ///     Note that you need to insert multiple backslashes in patterns like <c>'mm'</c>, otherwise the method will recognize
+        ///     the last <c>'m'</c> as a pattern.
+        ///   </para>
         /// </summary>
         /// <param name="format">The format to use.</param>
         /// <returns>The string representation of this semantic version, as specified by <paramref name="format"/>.</returns>

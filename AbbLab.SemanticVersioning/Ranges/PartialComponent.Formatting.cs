@@ -18,8 +18,20 @@ namespace AbbLab.SemanticVersioning
         };
 		/// <summary>
 		///   <para>Converts the value of this partial version component to its equivalent string representation, using the specified <paramref name="format"/>.</para>
-        ///   <para><paramref name="format"/> is a collection of two-character <b>rules</b> joined with commas (<c>','</c>). The first character defines the condition of the rule, and the second character defines the return value. Possible values: <c>'0'</c> (is zero), <c>'x'</c>, <c>'X'</c>, <c>'*'</c> (wildcards), <c>'_'</c> (omitted). The first character can also have the value of <c>'w'</c>, which matches any wildcard (note: it must be specified after any other wildcard specifiers). If the component has a positive numeric value, ignores the formatting rules.</para>
-        ///   <para>Examples: <c>"0_"</c> - omits if zero; <c>"0_,wx"</c> - omits if zero, replaces wildcards with <c>'x'</c>; <c>"x0,_*"</c> - replaces <c>'x'</c> with <c>'0'</c>, instead of omitting uses <c>'*'</c>.</para>
+        ///   <para>
+        ///     <paramref name="format"/> is a collection of two-character <b>rules</b> joined with commas (<c>','</c>).
+        ///     The first character defines the condition of the rule, and the second character defines the return value.
+        ///     Possible values: <c>'0'</c> (is zero), <c>'x'</c>, <c>'X'</c>, <c>'*'</c> (wildcards), <c>'_'</c> (omitted).
+        ///     The first character can also have the value of <c>'w'</c>, which matches any wildcard
+        ///     (note: it must be specified after any other wildcard specifiers).
+        ///     If the component has a positive numeric value, the method ignores the formatting rules.
+        ///   </para>
+        ///   <para>
+        ///     Examples:
+        ///     <c>"0_"</c> - omits if zero;
+        ///     <c>"0_,wx"</c> - omits if zero, replaces wildcards with <c>'x'</c>;
+        ///     <c>"x0,_*"</c> - replaces <c>'x'</c> with <c>'0'</c>, instead of omitting uses <c>'*'</c>.
+        ///   </para>
 		/// </summary>
 		/// <param name="format">The format to use.</param>
 		/// <returns>The string representation of this partial version component, as specified by <paramref name="format"/>.</returns>
