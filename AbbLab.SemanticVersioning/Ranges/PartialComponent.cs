@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace AbbLab.SemanticVersioning
 {
-    public readonly struct PartialComponent : IEquatable<PartialComponent>, IComparable<PartialComponent>, IComparable
+    public readonly partial struct PartialComponent : IEquatable<PartialComponent>, IComparable<PartialComponent>, IComparable
     {
         private readonly int _value;
 
@@ -64,16 +64,6 @@ namespace AbbLab.SemanticVersioning
         [Pure] public static bool operator <(PartialComponent a, PartialComponent b) => a.CompareTo(b) < 0;
         [Pure] public static bool operator >=(PartialComponent a, PartialComponent b) => a.CompareTo(b) >= 0;
         [Pure] public static bool operator <=(PartialComponent a, PartialComponent b) => a.CompareTo(b) <= 0;
-
-        /// <summary>
-        ///   <para>Converts the value of this partial version component to its equivalent string representation.</para>
-        /// </summary>
-        /// <returns>The string representation of this partial version component.</returns>
-        [Pure] public override string ToString() => _value switch
-        {
-            -4 => "x", -3 => "X", -2 => "*", -1 => string.Empty,
-            _ => Util.ToString(_value),
-        };
 
         [Pure] public int GetValueOrZero() => _value > -1 ? _value : 0;
 
