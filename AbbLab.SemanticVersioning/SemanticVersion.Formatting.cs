@@ -94,6 +94,7 @@ namespace AbbLab.SemanticVersioning
                                 FlushSeparator(sb, ref separator);
                                 sb.SimpleAppend(Major);
                             }
+                            else separator = default;
                         }
                         else // 'M' - include always
                         {
@@ -109,7 +110,7 @@ namespace AbbLab.SemanticVersioning
                             if (next < length && format[next] is 'm')
                             {
                                 position = next;
-                                if (_buildMetadata is not null) // 'mmm' - metadata, if any
+                                if (_buildMetadata.Length > 0) // 'mmm' - metadata, if any
                                 {
                                     int count = _buildMetadata.Length;
                                     FlushSeparator(sb, ref separator);
@@ -117,12 +118,14 @@ namespace AbbLab.SemanticVersioning
                                     for (int i = 1; i < count; i++)
                                         sb.Append('.').Append(_buildMetadata[i]);
                                 }
+                                else separator = default;
                             }
                             else if (Minor > 0) // 'mm' - include if > 0
                             {
                                 FlushSeparator(sb, ref separator);
                                 sb.SimpleAppend(Minor);
                             }
+                            else separator = default;
                         }
                         else // 'm' - include always
                         {
@@ -138,7 +141,7 @@ namespace AbbLab.SemanticVersioning
                             if (next < length && format[next] is 'p')
                             {
                                 position = next;
-                                if (_preReleases is not null) // 'ppp' - pre-releases, if any
+                                if (_preReleases.Length > 0) // 'ppp' - pre-releases, if any
                                 {
                                     int count = _preReleases.Length;
                                     FlushSeparator(sb, ref separator);
@@ -146,12 +149,14 @@ namespace AbbLab.SemanticVersioning
                                     for (int i = 1; i < count; i++)
                                         sb.Append('.').SimpleAppend(_preReleases[i]);
                                 }
+                                else separator = default;
                             }
                             else if (Patch > 0) // 'pp' - include if > 0
                             {
                                 FlushSeparator(sb, ref separator);
                                 sb.SimpleAppend(Patch);
                             }
+                            else separator = default;
                         }
                         else // 'p' - include always
                         {
