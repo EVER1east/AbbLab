@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="AbbLab.SemanticVersioning.csproj.DotSettings" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AbbLab.Extensions\AbbLab.Extensions.csproj" />
     <ProjectReference Include="..\AbbLab.Parsing\AbbLab.Parsing.csproj" />
   </ItemGroup>

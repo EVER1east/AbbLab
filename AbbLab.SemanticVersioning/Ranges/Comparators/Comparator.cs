@@ -23,8 +23,4 @@
             => new TildeRangeComparator(version);
 
     }
-    public interface IAdvancedComparator
-    {
-        (PrimitiveComparator, PrimitiveComparator?) ToPrimitives();
-    }
 }
