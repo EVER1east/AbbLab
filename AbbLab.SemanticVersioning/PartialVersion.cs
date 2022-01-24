@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 namespace AbbLab.SemanticVersioning
 {
-    public class PartialVersion : IEquatable<PartialVersion>
+    public sealed partial class PartialVersion : IEquatable<PartialVersion>
     {
         public PartialComponent Major { get; }
         public PartialComponent Minor { get; }
@@ -62,10 +62,12 @@ namespace AbbLab.SemanticVersioning
                               [InstantHandle] IEnumerable<string>? preReleases,
                               [InstantHandle] IEnumerable<string>? buildMetadata)
         {
+			// if one component is omitted, all subsequent components must be omitted as well
             if (major.IsOmitted && !minor.IsOmitted) throw new ArgumentException();
             if (minor.IsOmitted && !patch.IsOmitted) throw new ArgumentException();
-            if (major.IsWildcard && minor.IsNumeric) throw new ArgumentException();
-            if (minor.IsWildcard && patch.IsNumeric) throw new ArgumentException();
+			// if one component is omitted/a wildcard, subsequent components cannot have explicit values
+            if (!major.IsNumeric && minor.IsNumeric) throw new ArgumentException();
+            if (!minor.IsNumeric && patch.IsNumeric) throw new ArgumentException();
             Major = major;
             Minor = minor;
             Patch = patch;
@@ -80,10 +82,12 @@ namespace AbbLab.SemanticVersioning
                               [InstantHandle] IEnumerable<SemanticPreRelease>? preReleases,
                               [InstantHandle] IEnumerable<string>? buildMetadata)
         {
+            // if one component is omitted, all subsequent components must be omitted as well
             if (major.IsOmitted && !minor.IsOmitted) throw new ArgumentException();
             if (minor.IsOmitted && !patch.IsOmitted) throw new ArgumentException();
-            if (major.IsWildcard && minor.IsNumeric) throw new ArgumentException();
-            if (minor.IsWildcard && patch.IsNumeric) throw new ArgumentException();
+            // if one component is omitted/a wildcard, subsequent components cannot have explicit values
+            if (!major.IsNumeric && minor.IsNumeric) throw new ArgumentException();
+            if (!minor.IsNumeric && patch.IsNumeric) throw new ArgumentException();
             Major = major;
             Minor = minor;
             Patch = patch;

@@ -1,6 +1,6 @@
 ﻿namespace AbbLab.SemanticVersioning
 {
-    public sealed class VersionRange
+    public sealed class ComparatorSet
     {
 
     }
