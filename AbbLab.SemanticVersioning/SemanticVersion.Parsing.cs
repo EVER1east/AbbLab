@@ -86,7 +86,7 @@ namespace AbbLab.SemanticVersioning
             if (!Util.TryParse(patchSpan, out int patch))
                 return Util.Fail(SemanticErrorCode.PatchTooBig, out version);
 
-            SemanticPreRelease[]? preReleases;
+            SemanticPreRelease[]? preReleases = null;
             if (position < length && text[position] is '-')
             {
                 List<SemanticPreRelease> list = new List<SemanticPreRelease>();
@@ -107,9 +107,8 @@ namespace AbbLab.SemanticVersioning
                 while (position < length && text[position] is '.');
                 preReleases = list.ToArray();
             }
-            else preReleases = null;
 
-            string[]? buildMetadata;
+            string[]? buildMetadata = null;
             if (position < length && text[position] is '+')
             {
                 List<string> list = new List<string>();
@@ -125,7 +124,6 @@ namespace AbbLab.SemanticVersioning
                 while (position < length && text[position] is '.');
                 buildMetadata = list.ToArray();
             }
-            else buildMetadata = null;
 
             if (position < length) return Util.Fail(SemanticErrorCode.Leftovers, out version);
             version = new SemanticVersion(major, minor, patch, preReleases, buildMetadata);
@@ -266,7 +264,7 @@ namespace AbbLab.SemanticVersioning
                 patch = 0;
             }
 
-            SemanticPreRelease[]? preReleases;
+            SemanticPreRelease[]? preReleases = null;
             if (parser.Skip('-'))
             {
                 List<SemanticPreRelease> list = new List<SemanticPreRelease>();
@@ -295,9 +293,8 @@ namespace AbbLab.SemanticVersioning
                 while (Util.IsValidCharacter(parser.Peek()));
                 preReleases = list.ToArray();
             }
-            else preReleases = null;
 
-            string[]? buildMetadata;
+            string[]? buildMetadata = null;
             if (parser.Skip('+'))
             {
                 List<string> list = new List<string>();
@@ -310,7 +307,6 @@ namespace AbbLab.SemanticVersioning
                 while (parser.Skip('.'));
                 buildMetadata = list.ToArray();
             }
-            else buildMetadata = null;
 
             version = new SemanticVersion(major, minor, patch, preReleases, buildMetadata);
             return SemanticErrorCode.Success;
