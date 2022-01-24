@@ -16,8 +16,8 @@ namespace AbbLab.SemanticVersioning
             -4 => "x", -3 => "X", -2 => "*", -1 => string.Empty,
             _ => Util.ToString(_value),
         };
-		/// <summary>
-		///   <para>Converts the value of this partial version component to its equivalent string representation, using the specified <paramref name="format"/>.</para>
+        /// <summary>
+        ///   <para>Converts the value of this partial version component to its equivalent string representation, using the specified <paramref name="format"/>.</para>
         ///   <para>
         ///     <paramref name="format"/> is a collection of two-character <b>rules</b> joined with commas (<c>','</c>).
         ///     The first character defines the condition of the rule, and the second character defines the return value.
@@ -32,20 +32,20 @@ namespace AbbLab.SemanticVersioning
         ///     <c>"0_,wx"</c> - omits if zero, replaces wildcards with <c>'x'</c>;
         ///     <c>"x0,_*"</c> - replaces <c>'x'</c> with <c>'0'</c>, instead of omitting uses <c>'*'</c>.
         ///   </para>
-		/// </summary>
-		/// <param name="format">The format to use.</param>
-		/// <returns>The string representation of this partial version component, as specified by <paramref name="format"/>.</returns>
-		/// <exception cref="ArgumentException"><paramref name="format"/> is not a valid format string.</exception>
-        [Pure] public string ToString(string? format)
+        /// </summary>
+        /// <param name="format">The format to use.</param>
+        /// <returns>The string representation of this partial version component, as specified by <paramref name="format"/>.</returns>
+        /// <exception cref="ArgumentException"><paramref name="format"/> is not a valid format string.</exception>
+        [Pure] public string ToString(ReadOnlySpan<char> format)
         {
-			// BNF:
-			// <format>    ::= <rule> ( ',' <rule> )* | ''
-			// <rule>      ::= <specifier> <replacer>
-			// <specifier> ::= <replacer> | 'w'
-			// <replacer>  ::= '0' | 'x' | 'X' | '*' | '_'
+            // BNF:
+            // <format>    ::= <rule> ( ',' <rule> )* | ''
+            // <rule>      ::= <specifier> <replacer>
+            // <specifier> ::= <replacer> | 'w'
+            // <replacer>  ::= '0' | 'x' | 'X' | '*' | '_'
 
             if (_value > -1) return Util.ToString(_value);
-            if (format is null or "G" or "g") return ToString();
+            if (format.Length is 0 || format.Length is 1 && format[0] is 'G' or 'g') return ToString();
 
             char mySpecifier = _value == 0 ? '0' : _value == -1 ? '_' : GetWildcardCharacter();
             bool isWildcard = IsWildcard;
@@ -66,8 +66,11 @@ namespace AbbLab.SemanticVersioning
             }
             return mySpecifier == '_' ? string.Empty : mySpecifier.ToString();
         }
-        string IFormattable.ToString(string? format, IFormatProvider? _)
-            => ToString(format);
+        /// <inheritdoc cref="ToString(ReadOnlySpan{char})"/>
+        [Pure] public string ToString(string? format)
+            => format is null ? ToString() : ToString(format.AsSpan());
 
+        string IFormattable.ToString(string? format, IFormatProvider? _)
+            => format is null ? ToString() : ToString(format.AsSpan());
     }
 }
