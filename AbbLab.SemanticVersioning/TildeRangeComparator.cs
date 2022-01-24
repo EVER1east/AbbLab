@@ -1,12 +1,12 @@
 ﻿namespace AbbLab.SemanticVersioning
 {
-    public sealed class XRangeComparator : Comparator, IAdvancedComparator
+    public sealed class TildeRangeComparator : Comparator, IAdvancedComparator
     {
         public PartialVersion Version { get; }
         private PrimitiveComparator? primitiveBegin;
         private PrimitiveComparator? primitiveEnd;
 
-        public XRangeComparator(PartialVersion version) => Version = version;
+        public TildeRangeComparator(PartialVersion version) => Version = version;
 
         public (PrimitiveComparator, PrimitiveComparator?) ToPrimitives()
         {
@@ -14,35 +14,33 @@
             {
                 if (!Version.Major.IsNumeric)
                 {
-                    // x.x.x → >=0.0.0 <2147483648.0.0-0, or just >=0.0.0 (basically, any)
+                    // ~x.x.x → >=0.0.0 <2147483648.0.0-0, or just >=0.0.0 (basically, any)
                     primitiveBegin = new GreaterThanOrEqualToComparator(
                         new SemanticVersion(0, 0, 0, (SemanticPreRelease[]?)null, null));
                     primitiveEnd = null;
                 }
                 else if (!Version.Minor.IsNumeric)
                 {
-                    // 1.x.x → >=1.0.0 <2.0.0-0
+                    // allows minor-level changes
+                    // ~1.x.x → >=1.0.0 <2.0.0-0
                     int major = Version.Major.Value;
                     primitiveBegin = new GreaterThanOrEqualToComparator(
                         new SemanticVersion(major, 0, 0, (SemanticPreRelease[]?)null, null));
                     primitiveEnd = new LessThanComparator(
                         new SemanticVersion(major + 1, 0, 0, SemanticPreRelease.ZeroArray, null));
                 }
-                else if (!Version.Patch.IsNumeric)
+                else
                 {
-                    // 1.2.x → >=1.2.0 <1.3.0-0
+                    // allows patch-level changes
+                    // ~1.2.x → >=1.2.0 <1.3.0-0
+                    // ~1.2.3 → >=1.2.3 <1.3.0-0
+                    // ~1.2.3-alpha → >=1.2.3-alpha <1.3.0-0
                     int major = Version.Major.Value;
                     int minor = Version.Minor.Value;
                     primitiveBegin = new GreaterThanOrEqualToComparator(
-                        new SemanticVersion(major, minor, 0, (SemanticPreRelease[]?)null, null));
+                        new SemanticVersion(major, minor, Version.Patch.GetValueOrZero(), Version._preReleases, null));
                     primitiveEnd = new LessThanComparator(
                         new SemanticVersion(major, minor + 1, 0, SemanticPreRelease.ZeroArray, null));
-                }
-                else
-                {
-                    // 1.2.3 → =1.2.3
-                    primitiveBegin = new EqualToComparator((SemanticVersion)Version);
-                    primitiveEnd = null;
                 }
             }
             return (primitiveBegin, primitiveEnd);

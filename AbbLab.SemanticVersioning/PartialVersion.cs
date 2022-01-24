@@ -62,16 +62,21 @@ namespace AbbLab.SemanticVersioning
                               [InstantHandle] IEnumerable<string>? preReleases,
                               [InstantHandle] IEnumerable<string>? buildMetadata)
         {
-			// if one component is omitted, all subsequent components must be omitted as well
-            if (major.IsOmitted && !minor.IsOmitted) throw new ArgumentException();
-            if (minor.IsOmitted && !patch.IsOmitted) throw new ArgumentException();
-			// if one component is omitted/a wildcard, subsequent components cannot have explicit values
-            if (!major.IsNumeric && minor.IsNumeric) throw new ArgumentException();
-            if (!minor.IsNumeric && patch.IsNumeric) throw new ArgumentException();
+            // if one component is omitted, all subsequent components must be omitted as well
+            if (major.IsOmitted && !minor.IsOmitted) throw new ArgumentException(
+                "If the major version component is omitted, the minor version component must be omitted as well.", nameof(minor));
+            if (minor.IsOmitted && !patch.IsOmitted) throw new ArgumentException(
+                "If the minor version component is omitted, the patch version component must be omitted as well.", nameof(patch));
+            // if one component is omitted/a wildcard, subsequent components cannot have explicit values
+            if (!major.IsNumeric && minor.IsNumeric) throw new ArgumentException(
+                "If the major version component is a wildcard, the minor version component must be a wildcard or omitted.", nameof(minor));
+            if (!minor.IsNumeric && patch.IsNumeric) throw new ArgumentException(
+                "If the minor version component is a wildcard, the patch version component must be a wildcard or omitted.", nameof(patch));
             Major = major;
             Minor = minor;
             Patch = patch;
 
+            // TODO: version cannot have pre-releases or metadata, if any component is omitted
             string[] preReleasesArray;
             if (preReleases is not null && (preReleasesArray = preReleases.ToArray()).Length > 0)
                 _preReleases = Array.ConvertAll(preReleasesArray, SemanticPreRelease.Parse);
@@ -83,15 +88,20 @@ namespace AbbLab.SemanticVersioning
                               [InstantHandle] IEnumerable<string>? buildMetadata)
         {
             // if one component is omitted, all subsequent components must be omitted as well
-            if (major.IsOmitted && !minor.IsOmitted) throw new ArgumentException();
-            if (minor.IsOmitted && !patch.IsOmitted) throw new ArgumentException();
+            if (major.IsOmitted && !minor.IsOmitted) throw new ArgumentException(
+                "If the major version component is omitted, the minor version component must be omitted as well.", nameof(minor));
+            if (minor.IsOmitted && !patch.IsOmitted) throw new ArgumentException(
+                "If the minor version component is omitted, the patch version component must be omitted as well.", nameof(patch));
             // if one component is omitted/a wildcard, subsequent components cannot have explicit values
-            if (!major.IsNumeric && minor.IsNumeric) throw new ArgumentException();
-            if (!minor.IsNumeric && patch.IsNumeric) throw new ArgumentException();
+            if (!major.IsNumeric && minor.IsNumeric) throw new ArgumentException(
+                "If the major version component is a wildcard, the minor version component must be a wildcard or omitted.", nameof(minor));
+            if (!minor.IsNumeric && patch.IsNumeric) throw new ArgumentException(
+                "If the minor version component is a wildcard, the patch version component must be a wildcard or omitted.", nameof(patch));
             Major = major;
             Minor = minor;
             Patch = patch;
 
+            // TODO: version cannot have pre-releases or metadata, if any component is omitted
             SemanticPreRelease[] preReleasesArray;
             if (preReleases is not null && (preReleasesArray = preReleases.ToArray()).Length > 0)
                 _preReleases = preReleasesArray;

@@ -17,6 +17,10 @@
 
         public static HyphenRangeComparator HyphenRange(PartialVersion begin, PartialVersion end)
             => new HyphenRangeComparator(begin, end);
+        public static XRangeComparator XRange(PartialVersion version)
+            => new XRangeComparator(version);
+        public static TildeRangeComparator TildeRange(PartialVersion version)
+            => new TildeRangeComparator(version);
 
     }
     public interface IAdvancedComparator

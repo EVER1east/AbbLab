@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AbbLab.SemanticVersioning
+﻿namespace AbbLab.SemanticVersioning
 {
     public sealed class HyphenRangeComparator : Comparator, IAdvancedComparator
     {
@@ -15,53 +13,50 @@ namespace AbbLab.SemanticVersioning
             End = end;
         }
 
-        private static PrimitiveComparator ConvertBeginVersion(PartialVersion partial)
+        public (PrimitiveComparator, PrimitiveComparator?) ToPrimitives()
         {
-            // wildcards are equivalent to omitted components:
-            // x.x.x - … → >=0.0.0
-            // 1.x.x - … → >=1.0.0
-            // 1.2.x - … → >=1.2.0
-            // 1.2.3 - … → >=1.2.3
-            // 1.2.3-alpha - … → >=1.2.3-alpha
+            if (primitiveBegin is null)
+            {
+                // wildcards are equivalent to omitted components:
+                // x.x.x - … → >=0.0.0
+                // 1.x.x - … → >=1.0.0
+                // 1.2.x - … → >=1.2.0
+                // 1.2.3 - … → >=1.2.3
+                // 1.2.3-alpha - … → >=1.2.3-alpha
 
-            // SemanticVersion(PartialVersion) replaces wildcards with zeroes
-            return new GreaterThanOrEqualToComparator(new SemanticVersion(partial));
-        }
-        private static PrimitiveComparator ConvertEndVersion(PartialVersion partial)
-        {
-            if (!partial.Major.IsNumeric)
-            {
-                // … - x.x.x → <2147483648.0.0-0 (basically, any)
-                // return new AnyComparator()?
-                throw new NotImplementedException();
-            }
-            if (!partial.Minor.IsNumeric)
-            {
-                // … - 1.x.x → <2.0.0-0
-                return new LessThanComparator(new SemanticVersion(partial.Major.Value + 1, 0, 0,
-                                                                  SemanticPreRelease.ZeroArray, null));
-            }
-            if (!partial.Patch.IsNumeric)
-            {
-                // … - 1.2.x → <1.3.0-0
-                return new LessThanComparator(new SemanticVersion(partial.Major.Value, partial.Minor.Value + 1, 0,
-                                                                  SemanticPreRelease.ZeroArray, null));
-            }
-            // … - 1.2.3 → <=1.2.3
-            // … - 1.2.3-beta → <=1.2.3-beta
-            return new LessThanOrEqualToComparator((SemanticVersion)partial);
-        }
+                // SemanticVersion(PartialVersion) replaces wildcards with zeroes
+                primitiveBegin = new GreaterThanOrEqualToComparator(new SemanticVersion(Begin));
 
-        public (PrimitiveComparator, PrimitiveComparator) ToPrimitives()
-        {
-            primitiveBegin ??= ConvertBeginVersion(Begin);
-            primitiveEnd ??= ConvertEndVersion(End);
+                if (!End.Major.IsNumeric)
+                {
+                    // … - x.x.x → <2147483648.0.0-0 (basically, any)
+                    primitiveEnd = null;
+                }
+                else if (!End.Minor.IsNumeric)
+                {
+                    // … - 1.x.x → <2.0.0-0
+                    primitiveEnd = new LessThanComparator(
+                        new SemanticVersion(End.Major.Value + 1, 0, 0, SemanticPreRelease.ZeroArray, null));
+                }
+                else if (!End.Patch.IsNumeric)
+                {
+                    // … - 1.2.x → <1.3.0-0
+                    primitiveEnd = new LessThanComparator(
+                        new SemanticVersion(End.Major.Value, End.Minor.Value + 1, 0, SemanticPreRelease.ZeroArray, null));
+                }
+                else
+                {
+                    // … - 1.2.3 → <=1.2.3
+                    // … - 1.2.3-beta → <=1.2.3-beta
+                    primitiveEnd = new LessThanOrEqualToComparator((SemanticVersion)End);
+                }
+            }
             return (primitiveBegin, primitiveEnd);
         }
         public override bool IsSatisfiedBy(SemanticVersion version, bool includePreReleases)
         {
-            (PrimitiveComparator begin, PrimitiveComparator end) = ToPrimitives();
-            return begin.IsSatisfiedBy(version, includePreReleases) && end.IsSatisfiedBy(version, includePreReleases);
+            (PrimitiveComparator begin, PrimitiveComparator? end) = ToPrimitives();
+            return begin.IsSatisfiedBy(version, includePreReleases) && (end is null || end.IsSatisfiedBy(version, includePreReleases));
         }
 
     }
