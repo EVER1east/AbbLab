@@ -109,6 +109,12 @@ namespace AbbLab.SemanticVersioning
         }
         public static StringBuilder SimpleAppend(this StringBuilder sb, SemanticPreRelease preRelease)
             => preRelease.text is null ? sb.SimpleAppend(preRelease.number) : sb.Append(preRelease.text);
+        public static StringBuilder SimpleAppend(this StringBuilder sb, PartialComponent partialComponent)
+        {
+            if (partialComponent.IsNumeric)
+                return sb.SimpleAppend(partialComponent.Value);
+            return sb.Append(partialComponent.GetWildcardCharacter());
+        }
 
         [MustUseReturnValue] public static bool Fail<TResult>(out TResult? result)
         {
