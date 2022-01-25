@@ -269,13 +269,17 @@ namespace AbbLab.SemanticVersioning
             {
                 if (innerWhite) parser.SkipWhitespaces();
                 List<SemanticPreRelease> list = new List<SemanticPreRelease>();
+                bool removeEmpty = (options & SemanticOptions.RemoveEmptyPreReleases) is not 0;
                 do
                 {
                     ReadOnlySpan<char> identifier = parser.ReadWhile(&Util.IsValidCharacter);
-                    if (identifier.Length is 0) return Util.Fail(SemanticErrorCode.PreReleaseNotFound, out version);
-                    SemanticErrorCode code = SemanticPreRelease.ParseInternal(identifier, options, out SemanticPreRelease preRelease);
-                    if (code != SemanticErrorCode.Success) return Util.Fail(code, out version);
-                    list.Add(preRelease);
+                    if (identifier.Length > 0)
+                    {
+                        SemanticErrorCode code = SemanticPreRelease.ParseInternal(identifier, options, out SemanticPreRelease preRelease);
+                        if (code != SemanticErrorCode.Success) return Util.Fail(code, out version);
+                        list.Add(preRelease);
+                    }
+                    else if (!removeEmpty) return Util.Fail(SemanticErrorCode.PreReleaseNotFound, out version);
                     if (innerWhite) parser.SkipWhitespaces();
                 }
                 while (parser.Skip('.'));
@@ -301,11 +305,12 @@ namespace AbbLab.SemanticVersioning
             {
                 if (innerWhite) parser.SkipWhitespaces();
                 List<string> list = new List<string>();
+                bool removeEmpty = (options & SemanticOptions.RemoveEmptyBuildMetadata) is not 0;
                 do
                 {
                     string identifier = parser.ReadStringWhile(&Util.IsValidCharacter);
-                    if (identifier.Length is 0) return Util.Fail(SemanticErrorCode.BuildMetadataNotFound, out version);
-                    list.Add(identifier);
+                    if (identifier.Length > 0) list.Add(identifier);
+                    else if (!removeEmpty) return Util.Fail(SemanticErrorCode.BuildMetadataNotFound, out version);
                     if (innerWhite) parser.SkipWhitespaces();
                 }
                 while (parser.Skip('.'));

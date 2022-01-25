@@ -53,6 +53,14 @@ namespace AbbLab.SemanticVersioning
         ///   <para>Allows passing a string that contains non-version characters at the end.</para>
         /// </summary>
         AllowLeftovers              = 1 << 9,
+        /// <summary>
+        ///   <para>Removes empty pre-release identifiers from the semantic version.</para>
+        /// </summary>
+        RemoveEmptyPreReleases      = 1 << 10,
+        /// <summary>
+        ///   <para>Removes empty build metadata identifiers from the semantic version.</para>
+        /// </summary>
+        RemoveEmptyBuildMetadata    = 1 << 11,
 
         /// <summary>
         ///   <para>Specifies all extra parsing options, allowing normally invalid versions to be parsed.</para>
