@@ -14,19 +14,40 @@ namespace AbbLab.SemanticVersioning.Tests
         public void ParseTests(VersionInfo info)
         {
             Output.WriteLine($"Parsing `{info.Semantic}`.");
-            bool tryParseSuccess = SemanticVersion.TryParse(info.Semantic, out SemanticVersion? tryParseResult);
+            bool success = SemanticVersion.TryParse(info.Semantic, out SemanticVersion? tryParseResult);
             try
             {
                 SemanticVersion parseResult = SemanticVersion.Parse(info.Semantic);
-                if (!info.IsValid) throw new InvalidOperationException("An invalid semantic string was successfully parsed.");
-                Assert.True(tryParseSuccess, "TryParse() could not parse the version, but Parse() did.");
-                Assert.Equal(parseResult, tryParseResult, BuildMetadataComparer.Instance!);
-                info.Assert(parseResult);
+                Assert.True(success, "Parse() parsed what TryParse() couldn't.");
+                if (!info.IsValid) throw new InvalidOperationException("Successfully parsed an invalid version.");
+                Assert.Equal(tryParseResult, parseResult, BuildMetadataComparer.Instance!);
+                info.Assert(tryParseResult!);
             }
             catch (ArgumentException)
             {
-                if (info.IsValid) throw new InvalidOperationException("Could not parse a valid semantic string.");
-                Assert.False(tryParseSuccess, "Parse() could not parse the version, but TryParse() did.");
+                Assert.False(success);
+                if (info.IsValid) throw;
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(ParseFixture))]
+        public void LooseParseTests(VersionInfo info)
+        {
+            Output.WriteLine($"Loosely parsing `{info.Semantic}`.");
+            bool success = SemanticVersion.TryParse(info.Semantic, SemanticOptions.Loose, out SemanticVersion? tryParseResult);
+            try
+            {
+                SemanticVersion parseResult = SemanticVersion.Parse(info.Semantic, SemanticOptions.Loose);
+                Assert.True(success, "Parse() loosely parsed what TryParse() couldn't.");
+                if (!info.IsValidLoose) throw new InvalidOperationException("Successfully loosely parsed an invalid version.");
+                Assert.Equal(tryParseResult, parseResult, BuildMetadataComparer.Instance!);
+                info.Assert(tryParseResult!);
+            }
+            catch (ArgumentException)
+            {
+                Assert.False(success);
+                if (info.IsValidLoose) throw;
             }
         }
 

@@ -7,27 +7,38 @@ namespace AbbLab.SemanticVersioning.Tests
     {
         public string Semantic { get; }
         public bool IsValid { get; }
+        public bool IsValidLoose { get; }
         public int Major { get; }
         public int Minor { get; }
         public int Patch { get; }
         public object[] PreReleases { get; }
         public string[] BuildMetadata { get; }
 
-        public VersionInfo(string semantic, bool isValid)
+        public VersionInfo(string semantic)
         {
             Semantic = semantic;
-            if (isValid) throw new ArgumentException("If the semantic version is valid, use the other constructor.", nameof(isValid));
-            IsValid = isValid;
+            IsValid = false;
+            IsValidLoose = false;
             Major = -1;
             Minor = -1;
             Patch = -1;
             PreReleases = Array.Empty<object>();
             BuildMetadata = Array.Empty<string>();
         }
+        public VersionInfo(string semantic, bool looseOnly, int major, int minor, int patch, params object[] identifiers)
+            : this(semantic, major, minor, patch, identifiers)
+        {
+            if (looseOnly)
+            {
+                IsValid = false;
+                IsValidLoose = true;
+            }
+        }
         public VersionInfo(string semantic, int major, int minor, int patch, params object[] identifiers)
         {
             Semantic = semantic;
             IsValid = true;
+            IsValidLoose = true;
             Major = major;
             Minor = minor;
             Patch = patch;
@@ -49,7 +60,6 @@ namespace AbbLab.SemanticVersioning.Tests
 
         public void Assert(SemanticVersion version)
         {
-            Xunit.Assert.True(IsValid);
             Xunit.Assert.Equal(Major, version.Major);
             Xunit.Assert.Equal(Minor, version.Minor);
             Xunit.Assert.Equal(Patch, version.Patch);
