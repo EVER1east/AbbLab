@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace AbbLab.SemanticVersioning.Tests
 {
-    public readonly struct VersionInfo
+    public readonly struct VersionTest
     {
         public string Semantic { get; }
         public bool IsValid { get; }
@@ -14,7 +14,7 @@ namespace AbbLab.SemanticVersioning.Tests
         public object[] PreReleases { get; }
         public string[] BuildMetadata { get; }
 
-        public VersionInfo(string semantic)
+        public VersionTest(string semantic)
         {
             Semantic = semantic;
             IsValid = false;
@@ -25,7 +25,7 @@ namespace AbbLab.SemanticVersioning.Tests
             PreReleases = Array.Empty<object>();
             BuildMetadata = Array.Empty<string>();
         }
-        public VersionInfo(string semantic, bool looseOnly, int major, int minor, int patch, params object[] identifiers)
+        public VersionTest(string semantic, bool looseOnly, int major, int minor, int patch, params object[] identifiers)
             : this(semantic, major, minor, patch, identifiers)
         {
             if (looseOnly)
@@ -34,7 +34,7 @@ namespace AbbLab.SemanticVersioning.Tests
                 IsValidLoose = true;
             }
         }
-        public VersionInfo(string semantic, int major, int minor, int patch, params object[] identifiers)
+        public VersionTest(string semantic, int major, int minor, int patch, params object[] identifiers)
         {
             Semantic = semantic;
             IsValid = true;
