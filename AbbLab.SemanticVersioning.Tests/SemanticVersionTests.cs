@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -116,5 +118,176 @@ namespace AbbLab.SemanticVersioning.Tests
             Assert.Equal(info.Expected, format.ToString(info.Format, null));
             Assert.Equal(info.Expected, format.ToString(info.Format, CultureInfo.InvariantCulture));
         }
+
+        [Fact]
+        public void ComparisonTest()
+        {
+            List<SemanticVersion?> versions = new List<SemanticVersion?>(
+                SortFixture.Select(static v => v is null ? null : SemanticVersion.Parse(v)));
+            List<SemanticVersion?> sorted = new List<SemanticVersion?>(versions);
+            sorted.Sort();
+            Assert.Equal(versions, sorted);
+
+            int count = versions.Count;
+            for (int i = 0; i < count; i++)
+            {
+                SemanticVersion? me = versions[i];
+                for (int j = 0; j < i; j++)
+                {
+                    // greater than any of the previous versions
+                    SemanticVersion? other = versions[j];
+                    if (me is not null)
+                    {
+                        Assert.True(me.CompareTo(other) > 0);
+                        Assert.True(((IComparable)me).CompareTo(other) > 0);
+                        Assert.False(me.Equals(other));
+                        Assert.False(me.Equals((object?)other));
+                    }
+                    Assert.True(me > other);
+                    Assert.True(me >= other);
+                    Assert.True(other < me);
+                    Assert.True(other <= me);
+                    Assert.True(me != other);
+                    Assert.False(me == other);
+                }
+                for (int j = i + 1; j < count; j++)
+                {
+                    // less than any of the subsequent versions
+                    SemanticVersion? other = versions[j];
+                    if (other is not null)
+                    {
+                        Assert.True(other.CompareTo(me) > 0);
+                        Assert.True(((IComparable)other).CompareTo(me) > 0);
+                        Assert.False(other.Equals(me));
+                        Assert.False(other.Equals((object?)me));
+                    }
+                    Assert.True(other > me);
+                    Assert.True(other >= me);
+                    Assert.True(me < other);
+                    Assert.True(me <= other);
+                    Assert.True(me != other);
+                    Assert.False(me == other);
+                }
+                // equal to self
+                if (me is not null)
+                {
+                    Assert.True(me.CompareTo(me) == 0);
+                    Assert.True(((IComparable)me).CompareTo(me) == 0);
+                    Assert.True(me.Equals(me));
+                    Assert.True(me.Equals((object)me));
+                    Assert.Equal(me.GetHashCode(), me.GetHashCode());
+
+                    SemanticVersion clone = SemanticVersion.Parse(SortFixture[i]!);
+                    Assert.True(me.CompareTo(clone) == 0);
+                    Assert.True(((IComparable)me).CompareTo(clone) == 0);
+                    Assert.True(me.Equals(clone));
+                    Assert.True(me.Equals((object)clone));
+                    Assert.Equal(me.GetHashCode(), clone.GetHashCode());
+
+                    Assert.Throws<ArgumentException>(() => ((IComparable)me).CompareTo(0.0));
+                }
+#pragma warning disable CS1718 // Comparison made to same variable
+                // ReSharper disable EqualExpressionComparison
+                Assert.False(me > me);
+                Assert.True(me >= me);
+                Assert.False(me < me);
+                Assert.True(me <= me);
+                Assert.False(me != me);
+                Assert.True(me == me);
+#pragma warning restore CS1718 // Comparison made to same variable
+                // ReSharper restore EqualExpressionComparison
+
+            }
+
+        }
+
+        [Fact]
+        public void MembersTest()
+        {
+            SemanticVersion version = SemanticVersion.Parse("12.34.56-alpha.8.beta+test-build.011");
+
+            Assert.Null(version._preReleasesReadonly);
+            Assert.Same(version.PreReleases, version.PreReleases);
+
+            Assert.Null(version._buildMetadataReadonly);
+            Assert.Same(version.BuildMetadata, version.BuildMetadata);
+        }
+
+        private static void AssertVersion(SemanticVersion version, int major, int minor, int patch,
+                                          IEnumerable<SemanticPreRelease>? preReleases = null, IEnumerable<string>? buildMetadata = null)
+        {
+            Assert.Equal(major, version.Major);
+            Assert.Equal(minor, version.Minor);
+            Assert.Equal(patch, version.Patch);
+            if (preReleases is null) Assert.Empty(version.PreReleases);
+            else Assert.Equal(preReleases, version.PreReleases);
+            if (buildMetadata is null) Assert.Empty(version.BuildMetadata);
+            else Assert.Equal(buildMetadata, version.BuildMetadata);
+        }
+
+        [Fact]
+        public void ConstructorTest()
+        {
+            string[] stringPreReleases = { "alpha", "8", "beta" };
+            SemanticPreRelease[] preReleases = { "alpha", 8, "beta" };
+            string[] buildMetadata = { "test-build", "003" };
+
+            AssertVersion(new SemanticVersion(12, 34, 56),
+                          12, 34, 56);
+            AssertVersion(new SemanticVersion(12, 34, 56, stringPreReleases),
+                          12, 34, 56, preReleases);
+            AssertVersion(new SemanticVersion(12, 34, 56, preReleases),
+                          12, 34, 56, preReleases);
+            AssertVersion(new SemanticVersion(12, 34, 56, stringPreReleases.AsEnumerable()),
+                          12, 34, 56, preReleases);
+            AssertVersion(new SemanticVersion(12, 34, 56, preReleases.AsEnumerable()),
+                          12, 34, 56, preReleases);
+            AssertVersion(new SemanticVersion(12, 34, 56, stringPreReleases.AsEnumerable(), buildMetadata),
+                          12, 34, 56, preReleases, buildMetadata);
+            AssertVersion(new SemanticVersion(12, 34, 56, preReleases.AsEnumerable(), buildMetadata),
+                          12, 34, 56, preReleases, buildMetadata);
+
+            Assert.Throws<ArgumentOutOfRangeException>(
+                static () => new SemanticVersion(-1, 0, 0, (IEnumerable<string>?)null));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                static () => new SemanticVersion(0, -1, 0, (IEnumerable<string>?)null));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                static () => new SemanticVersion(0, 0, -1, (IEnumerable<string>?)null));
+
+            Assert.Throws<ArgumentOutOfRangeException>(
+                static () => new SemanticVersion(-1, 0, 0, (IEnumerable<SemanticPreRelease>?)null));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                static () => new SemanticVersion(0, -1, 0, (IEnumerable<SemanticPreRelease>?)null));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                static () => new SemanticVersion(0, 0, -1, (IEnumerable<SemanticPreRelease>?)null));
+
+            Assert.Throws<ArgumentException>(
+                static () => new SemanticVersion(12, 34, 56, (IEnumerable<string>?)null, new[] { "build", string.Empty }));
+            Assert.Throws<ArgumentException>(
+                static () => new SemanticVersion(12, 34, 56, (IEnumerable<string>?)null, new[] { "build", "$$invalid$$" }));
+
+        }
+
+        [Fact]
+        public void ConversionTest()
+        {
+            Version systemVersion = new Version(12, 34);
+            AssertVersion(new SemanticVersion(systemVersion), 12, 34, 0);
+            AssertVersion((SemanticVersion)systemVersion, 12, 34, 0);
+            systemVersion = new Version(12, 34, 56);
+            AssertVersion(new SemanticVersion(systemVersion), 12, 34, 56);
+            AssertVersion((SemanticVersion)systemVersion, 12, 34, 56);
+            systemVersion = new Version(12, 34, 56, 78);
+            AssertVersion(new SemanticVersion(systemVersion), 12, 34, 56);
+            AssertVersion((SemanticVersion)systemVersion, 12, 34, 56);
+
+            systemVersion = (Version)new SemanticVersion(12, 34, 56, new []{ "alpha" }, new []{ "build" });
+            Assert.Equal(12, systemVersion.Major);
+            Assert.Equal(34, systemVersion.Minor);
+            Assert.Equal(56, systemVersion.Build);
+            Assert.Equal(-1, systemVersion.Revision);
+
+        }
+
     }
 }
