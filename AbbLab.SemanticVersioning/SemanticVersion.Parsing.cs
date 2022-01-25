@@ -268,11 +268,11 @@ namespace AbbLab.SemanticVersioning
             SemanticPreRelease[]? preReleases = null;
             if (parser.Skip('-'))
             {
-                if (innerWhite) parser.SkipWhitespaces();
                 List<SemanticPreRelease> list = new List<SemanticPreRelease>();
                 bool removeEmpty = (options & SemanticOptions.RemoveEmptyPreReleases) is not 0;
                 do
                 {
+                    if (innerWhite) parser.SkipWhitespaces();
                     ReadOnlySpan<char> identifier = parser.ReadWhile(&Util.IsValidCharacter);
                     if (identifier.Length > 0)
                     {
@@ -304,11 +304,11 @@ namespace AbbLab.SemanticVersioning
             string[]? buildMetadata = null;
             if (parser.Skip('+'))
             {
-                if (innerWhite) parser.SkipWhitespaces();
                 List<string> list = new List<string>();
                 bool removeEmpty = (options & SemanticOptions.RemoveEmptyBuildMetadata) is not 0;
                 do
                 {
+                    if (innerWhite) parser.SkipWhitespaces();
                     string identifier = parser.ReadStringWhile(&Util.IsValidCharacter);
                     if (identifier.Length > 0) list.Add(identifier);
                     else if (!removeEmpty) return Util.Fail(SemanticErrorCode.BuildMetadataNotFound, out version);
