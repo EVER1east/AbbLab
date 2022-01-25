@@ -115,5 +115,14 @@ namespace AbbLab.Extensions
         public static void Sort<T>(this T[] array, int startIndex, int count, [InstantHandle] Func<T, T, int> comparison)
             => Array.Sort(array, startIndex, count, Comparer<T>.Create(comparison.Invoke));
 
+        public static TResult[] Cast<TResult>(this Array array)
+        {
+            int length = array.Length;
+            TResult[] result = new TResult[length];
+            for (int i = 0; i < length; i++)
+                result[i] = (TResult)array.GetValue(i);
+            return result;
+        }
+
     }
 }
