@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Globalization;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -91,6 +91,16 @@ namespace AbbLab.SemanticVersioning.Tests
                 Assert.Equal(info.Semantic, version.ToString("G"));
                 Assert.Equal(info.Semantic, version.ToString("g"));
                 Assert.Equal(info.Semantic, version.ToString("M.m.p-ppp+mmm"));
+
+                IFormattable format = version;
+                Assert.Equal(info.Semantic, format.ToString(null, null));
+                Assert.Equal(info.Semantic, format.ToString("G", null));
+                Assert.Equal(info.Semantic, format.ToString("g", null));
+                Assert.Equal(info.Semantic, format.ToString("M.m.p-ppp+mmm", null));
+                Assert.Equal(info.Semantic, format.ToString(null, CultureInfo.InvariantCulture));
+                Assert.Equal(info.Semantic, format.ToString("G", CultureInfo.InvariantCulture));
+                Assert.Equal(info.Semantic, format.ToString("g", CultureInfo.InvariantCulture));
+                Assert.Equal(info.Semantic, format.ToString("M.m.p-ppp+mmm", CultureInfo.InvariantCulture));
             }
         }
 
@@ -100,7 +110,11 @@ namespace AbbLab.SemanticVersioning.Tests
         {
             Output.WriteLine($"Formatting `{info.Semantic}` using `{info.Format}`.");
             SemanticVersion version = SemanticVersion.Parse(info.Semantic);
+
             Assert.Equal(info.Expected, version.ToString(info.Format));
+            IFormattable format = version;
+            Assert.Equal(info.Expected, format.ToString(info.Format, null));
+            Assert.Equal(info.Expected, format.ToString(info.Format, CultureInfo.InvariantCulture));
         }
     }
 }
