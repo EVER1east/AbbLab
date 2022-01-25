@@ -166,6 +166,7 @@ namespace AbbLab.SemanticVersioning
                         break;
                     default:
                         FlushSeparator(sb, ref separator);
+                        sb.Append(format[position]);
                         break;
                 }
             }
