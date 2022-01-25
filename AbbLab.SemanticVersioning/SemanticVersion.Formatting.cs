@@ -21,15 +21,15 @@ namespace AbbLab.SemanticVersioning
             {
                 sb.Append('-').SimpleAppend(_preReleases[0]);
                 int length = _preReleases.Length;
-                for (int i = 0; i < length; i++)
-                    sb.Append(',').SimpleAppend(_preReleases[i]);
+                for (int i = 1; i < length; i++)
+                    sb.Append('.').SimpleAppend(_preReleases[i]);
             }
             if (_buildMetadata.Length > 0)
             {
                 sb.Append('+').Append(_buildMetadata[0]);
                 int length = _buildMetadata.Length;
-                for (int i = 0; i < length; i++)
-                    sb.Append(',').Append(_buildMetadata[i]);
+                for (int i = 1; i < length; i++)
+                    sb.Append('.').Append(_buildMetadata[i]);
             }
             return sb.ToString();
         }
