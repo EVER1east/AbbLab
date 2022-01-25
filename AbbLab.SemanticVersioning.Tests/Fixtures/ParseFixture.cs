@@ -25,6 +25,10 @@ namespace AbbLab.SemanticVersioning.Tests
             new VersionInfo("1.", true, 1, 0, 0),
             new VersionInfo("1.2", true, 1, 2, 0),
             new VersionInfo("1.2.", true, 1, 2, 0),
+            new VersionInfo("1-alpha.0+build.007", true, 1, 0, 0, "alpha", 0, "+build", "007"),
+            new VersionInfo("1.-alpha.0+build.007", true, 1, 0, 0, "alpha", 0, "+build", "007"),
+            new VersionInfo("1.2-alpha.0+build.007", true, 1, 2, 0, "alpha", 0, "+build", "007"),
+            new VersionInfo("1.2.-alpha.0+build.007", true, 1, 2, 0, "alpha", 0, "+build", "007"),
 
             // alphabetic pre-releases
             new VersionInfo("1.2.3-alpha", 1, 2, 3, "alpha"),
@@ -92,13 +96,26 @@ namespace AbbLab.SemanticVersioning.Tests
             new VersionInfo("0.0.7-pre-alpha.-03+build.02", 0, 0, 7, "pre-alpha", "-03", "+build", "02"),
             new VersionInfo("0.0.7-pre-alpha.03+build.02", true, 0, 0, 7, "pre-alpha", 3, "+build", "02"),
 
+            // prefixes
+            new VersionInfo("v1.2.3", true, 1, 2, 3),
+            new VersionInfo("V1.2.3", true, 1, 2, 3),
+            new VersionInfo("=v1.2.3", true, 1, 2, 3),
+            new VersionInfo("=V1.2.3", true, 1, 2, 3),
+            new VersionInfo("v  1.2.3", true, 1, 2, 3),
+            new VersionInfo("V  1.2.3", true, 1, 2, 3),
+            new VersionInfo("=  v  1.2.3", true, 1, 2, 3),
+            new VersionInfo("=  V  1.2.3", true, 1, 2, 3),
+            new VersionInfo("v=1.2.3"), // invalid
+            new VersionInfo("V=1.2.3"), // '=' must precede 'v'
+            new VersionInfo("v  =  1.2.3"),
+            new VersionInfo("V  =  1.2.3"),
+
             // leading and trailing whitespace
             new VersionInfo("  1.7.10-alpha.5  ", true, 1, 7, 10, "alpha", 5),
             new VersionInfo("\r\n \t1.7.10-alpha.5\t \n\r", true, 1, 7, 10, "alpha", 5),
             // leftovers
             new VersionInfo("1.7.5-pre.2+build$$", true, 1, 7, 5, "pre", 2, "+build"),
             new VersionInfo("\r\n \t1.7.5-pre.2+build\t \n\r$$", true, 1, 7, 5, "pre", 2, "+build"),
-
             // inner whitespace
             new VersionInfo("1 . 2 . 5 - alpha . 6 . dev", true, 1, 2, 5, "alpha", 6, "dev"),
             new VersionInfo("1\r . \t2 .\n 5 \n-\t alpha \n. 6\r \n. \tdev", true, 1, 2, 5, "alpha", 6, "dev"),
@@ -108,6 +125,19 @@ namespace AbbLab.SemanticVersioning.Tests
             new VersionInfo("0.6.7beta5alpha", true, 0, 6, 7, "beta", 5, "alpha"),
             new VersionInfo("0.6.7beta5alpha+build.007", true, 0, 6, 7, "beta", 5, "alpha", "+build", "007"),
             new VersionInfo("0.6.7 0alpha7", true, 0, 6, 7, 0, "alpha", 7),
+
+            // number limits
+            new VersionInfo("2147483647.2147483647.2147483647", 2147483647, 2147483647, 2147483647),
+            new VersionInfo("2147483648.2147483647.2147483647"),
+            new VersionInfo("2147483647.2147483648.2147483647"),
+            new VersionInfo("2147483647.2147483647.2147483648"),
+            new VersionInfo("1.2.3-alpha.2147483647", 1, 2, 3, "alpha", 2147483647),
+            new VersionInfo("1.2.3-alpha.2147483648"),
+            new VersionInfo("1.2.3alpha2147483647", true, 1, 2, 3, "alpha", 2147483647),
+            new VersionInfo("1.2.3alpha2147483648"),
+            new VersionInfo("1.2.3+build.2147483647", 1, 2, 3, "+build", "2147483647"),
+            new VersionInfo("1.2.3+build.2147483648", 1, 2, 3, "+build", "2147483648"),
+
         });
     }
 }
