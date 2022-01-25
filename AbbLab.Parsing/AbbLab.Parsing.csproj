@@ -1,7 +1,31 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <!-- Project Properties -->
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+
+    <!-- Header -->
+    <AssemblyName>AbbLab.Parsing</AssemblyName>
+    <PackageId>$(AssemblyName)</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Abbysssal</Authors>
+    <Company>$(Authors)</Company>
+    <Copyright></Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+    <!-- Title, Description, Tags -->
+    <Title>$(AssemblyName)</Title>
+    <Description>
+
+    </Description>
+    <PackageTags></PackageTags>
+
+    <!-- Repository -->
+    <PackageProjectUrl>https://github.com/Abbysssal/AbbLab</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Abbysssal/AbbLab.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryBranch>main</RepositoryBranch>
+
   </PropertyGroup>
 
   <ItemGroup>

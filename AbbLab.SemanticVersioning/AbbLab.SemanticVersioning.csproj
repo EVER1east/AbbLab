@@ -1,20 +1,45 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <!-- Project Properties -->
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+
+    <!-- Header -->
+    <AssemblyName>AbbLab.SemanticVersioning</AssemblyName>
+    <PackageId>$(AssemblyName)</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Abbysssal</Authors>
+    <Company>$(Authors)</Company>
+    <Copyright></Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+    <!-- Title, Description, Tags -->
+    <Title>$(AssemblyName)</Title>
+    <Description>
+
+    </Description>
+    <PackageTags></PackageTags>
+
+    <!-- Repository -->
+    <PackageProjectUrl>https://github.com/Abbysssal/AbbLab</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Abbysssal/AbbLab.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryBranch>main</RepositoryBranch>
+
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="AbbLab.SemanticVersioning.csproj.DotSettings" />
-  </ItemGroup>
+    <!-- Expose internals to Tests -->
+    <InternalsVisibleTo Include="AbbLab.SemanticVersioning.Tests" />
 
-  <ItemGroup>
     <ProjectReference Include="..\AbbLab.Extensions\AbbLab.Extensions.csproj" />
     <ProjectReference Include="..\AbbLab.Parsing\AbbLab.Parsing.csproj" />
+
+    <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
+    <None Remove="AbbLab.SemanticVersioning.csproj.DotSettings" />
   </ItemGroup>
 
 </Project>
