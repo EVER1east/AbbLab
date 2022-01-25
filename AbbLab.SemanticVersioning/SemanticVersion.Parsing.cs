@@ -226,43 +226,44 @@ namespace AbbLab.SemanticVersioning
                 return Util.Fail(SemanticErrorCode.MajorTooBig, out version);
             if (innerWhite) parser.SkipWhitespaces();
 
-            int minor, patch;
+            int minor = 0, patch = 0;
             if (parser.Skip('.'))
             {
                 if (innerWhite) parser.SkipWhitespaces();
 
                 ReadOnlySpan<char> minorSpan = parser.ReadWhile(&Util.IsDigit);
-                if (minorSpan.Length is 0) return Util.Fail(SemanticErrorCode.MinorNotFound, out version);
-                if (minorSpan[0] is '0' && minorSpan.Length > 1 && noLeadingZeroes)
-                    return Util.Fail(SemanticErrorCode.MinorLeadingZeroes, out version);
-                if (!Util.TryParse(minorSpan, out minor))
-                    return Util.Fail(SemanticErrorCode.MinorTooBig, out version);
+                if (minorSpan.Length > 0)
+                {
+                    if (minorSpan[0] is '0' && minorSpan.Length > 1 && noLeadingZeroes)
+                        return Util.Fail(SemanticErrorCode.MinorLeadingZeroes, out version);
+                    if (!Util.TryParse(minorSpan, out minor))
+                        return Util.Fail(SemanticErrorCode.MinorTooBig, out version);
+                    if (innerWhite) parser.SkipWhitespaces();
+                }
+                else if ((options & SemanticOptions.OptionalMinor) is 0)
+                    return Util.Fail(SemanticErrorCode.MinorNotFound, out version);
 
-                if (innerWhite) parser.SkipWhitespaces();
                 if (parser.Skip('.'))
                 {
                     if (innerWhite) parser.SkipWhitespaces();
 
                     ReadOnlySpan<char> patchSpan = parser.ReadWhile(&Util.IsDigit);
-                    if (patchSpan.Length is 0) return Util.Fail(SemanticErrorCode.PatchNotFound, out version);
-                    if (patchSpan[0] is '0' && patchSpan.Length > 1 && noLeadingZeroes)
-                        return Util.Fail(SemanticErrorCode.PatchLeadingZeroes, out version);
-                    if (!Util.TryParse(patchSpan, out patch))
-                        return Util.Fail(SemanticErrorCode.PatchTooBig, out version);
-
-                    if (innerWhite) parser.SkipWhitespaces();
+                    if (patchSpan.Length > 0)
+                    {
+                        if (patchSpan[0] is '0' && patchSpan.Length > 1 && noLeadingZeroes)
+                            return Util.Fail(SemanticErrorCode.PatchLeadingZeroes, out version);
+                        if (!Util.TryParse(patchSpan, out patch))
+                            return Util.Fail(SemanticErrorCode.PatchTooBig, out version);
+                        if (innerWhite) parser.SkipWhitespaces();
+                    }
+                    else if ((options & SemanticOptions.OptionalPatch) is 0)
+                        return Util.Fail(SemanticErrorCode.PatchNotFound, out version);
                 }
                 else if ((options & SemanticOptions.OptionalPatch) is 0)
                     return Util.Fail(SemanticErrorCode.PatchNotFound, out version);
-                else patch = 0;
             }
             else if ((options & SemanticOptions.OptionalMinor) is 0)
                 return Util.Fail(SemanticErrorCode.MinorNotFound, out version);
-            else
-            {
-                minor = 0;
-                patch = 0;
-            }
 
             SemanticPreRelease[]? preReleases = null;
             if (parser.Skip('-'))
