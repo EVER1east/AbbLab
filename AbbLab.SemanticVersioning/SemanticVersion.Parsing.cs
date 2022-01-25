@@ -117,7 +117,7 @@ namespace AbbLab.SemanticVersioning
                     int identifierStart = ++position;
                     while (position < length && Util.IsValidCharacter(text[position]))
                         position++;
-                    if (position == identifierStart) return Util.Fail(SemanticErrorCode.PreReleaseNotFound, out version);
+                    if (position == identifierStart) return Util.Fail(SemanticErrorCode.BuildMetadataNotFound, out version);
 
                     list.Add(new string(text[identifierStart..position]));
                 }
