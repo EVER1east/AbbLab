@@ -120,7 +120,7 @@ namespace AbbLab.Extensions
             int length = array.Length;
             TResult[] result = new TResult[length];
             for (int i = 0; i < length; i++)
-                result[i] = (TResult)array.GetValue(i);
+                result[i] = (TResult)array.GetValue(i)!;
             return result;
         }
 
