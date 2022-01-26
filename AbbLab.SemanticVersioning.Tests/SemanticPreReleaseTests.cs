@@ -35,14 +35,14 @@ namespace AbbLab.SemanticVersioning.Tests
         [MemberData(nameof(ParseFixture))]
         public void ParseTests(PreReleaseTest info)
         {
-            Output.WriteLine($"Parsing `{info.Semantic}`.");
+            Output.WriteLine($"Parsing `{info.Semantic}` pre-release.");
             bool success = SemanticPreRelease.TryParse(info.Semantic, out SemanticPreRelease tryParseResult);
             try
             {
                 SemanticPreRelease parseResult = SemanticPreRelease.Parse(info.Semantic);
                 SemanticPreRelease ctorResult = new SemanticPreRelease(info.Semantic);
                 Assert.True(success, "Parse() parsed what TryParse() couldn't.");
-                if (!info.IsValid) throw new InvalidOperationException("Successfully parsed an invalid version.");
+                Assert.True(info.IsValid, "Successfully parsed an invalid pre-release.");
                 AssertPreRelease(tryParseResult, info.Value);
 
                 AssertPreRelease(parseResult, info.Value);
@@ -56,7 +56,7 @@ namespace AbbLab.SemanticVersioning.Tests
             catch (ArgumentException)
             {
                 Assert.False(success);
-                if (info.IsValid) throw;
+                Assert.False(info.IsValid, "Could not parse a valid pre-release.");
             }
             const SemanticOptions pseudoStrictMode = (SemanticOptions)int.MinValue;
             success = SemanticPreRelease.TryParse(info.Semantic, pseudoStrictMode, out tryParseResult);
@@ -65,7 +65,7 @@ namespace AbbLab.SemanticVersioning.Tests
                 SemanticPreRelease parseResult = SemanticPreRelease.Parse(info.Semantic, pseudoStrictMode);
                 SemanticPreRelease ctorResult = new SemanticPreRelease(info.Semantic, pseudoStrictMode);
                 Assert.True(success, "Parse() parsed what TryParse() couldn't.");
-                if (!info.IsValid) throw new InvalidOperationException("Successfully parsed an invalid version.");
+                Assert.True(info.IsValid, "Successfully parsed an invalid pre-release.");
                 AssertPreRelease(tryParseResult, info.Value);
 
                 AssertPreRelease(parseResult, info.Value);
@@ -79,7 +79,7 @@ namespace AbbLab.SemanticVersioning.Tests
             catch (ArgumentException)
             {
                 Assert.False(success);
-                if (info.IsValid) throw;
+                Assert.False(info.IsValid, "Could not parse a valid pre-release.");
             }
         }
 
@@ -94,7 +94,7 @@ namespace AbbLab.SemanticVersioning.Tests
                 SemanticPreRelease parseResult = SemanticPreRelease.Parse(info.Semantic, SemanticOptions.Loose);
                 SemanticPreRelease ctorResult = new SemanticPreRelease(info.Semantic, SemanticOptions.Loose);
                 Assert.True(success, "Parse() loosely parsed what TryParse() couldn't.");
-                if (!info.IsValidLoose) throw new InvalidOperationException("Successfully loosely parsed an invalid version.");
+                Assert.True(info.IsValidLoose, "Successfully loosely parsed an invalid pre-release.");
                 AssertPreRelease(tryParseResult, info.Value);
 
                 AssertPreRelease(parseResult, info.Value);
@@ -108,7 +108,7 @@ namespace AbbLab.SemanticVersioning.Tests
             catch (ArgumentException)
             {
                 Assert.False(success);
-                if (info.IsValidLoose) throw;
+                Assert.False(info.IsValidLoose, "Could not loosely parse a valid pre-release.");
             }
         }
 
@@ -123,7 +123,7 @@ namespace AbbLab.SemanticVersioning.Tests
                 SemanticPreRelease parseResult = SemanticPreRelease.Parse(info.Semantic.AsSpan());
                 SemanticPreRelease ctorResult = new SemanticPreRelease(info.Semantic.AsSpan());
                 Assert.True(success, "Parse() parsed what TryParse() couldn't.");
-                if (!info.IsValid) throw new InvalidOperationException("Successfully parsed an invalid version.");
+                Assert.True(info.IsValid, "Successfully parsed an invalid pre-release.");
                 AssertPreRelease(tryParseResult, info.Value);
 
                 AssertPreRelease(parseResult, info.Value);
@@ -137,7 +137,7 @@ namespace AbbLab.SemanticVersioning.Tests
             catch (ArgumentException)
             {
                 Assert.False(success);
-                if (info.IsValid) throw;
+                Assert.False(info.IsValid, "Could not parse a valid pre-release.");
             }
         }
 
@@ -152,7 +152,7 @@ namespace AbbLab.SemanticVersioning.Tests
                 SemanticPreRelease parseResult = SemanticPreRelease.Parse(info.Semantic.AsSpan(), SemanticOptions.Loose);
                 SemanticPreRelease ctorResult = new SemanticPreRelease(info.Semantic.AsSpan(), SemanticOptions.Loose);
                 Assert.True(success, "Parse() loosely parsed what TryParse() couldn't.");
-                if (!info.IsValidLoose) throw new InvalidOperationException("Successfully loosely parsed an invalid version.");
+                Assert.True(info.IsValidLoose, "Successfully loosely parsed an invalid pre-release.");
                 AssertPreRelease(tryParseResult, info.Value);
 
                 AssertPreRelease(parseResult, info.Value);
@@ -166,7 +166,7 @@ namespace AbbLab.SemanticVersioning.Tests
             catch (ArgumentException)
             {
                 Assert.False(success);
-                if (info.IsValidLoose) throw;
+                Assert.False(info.IsValidLoose, "Could not loosely parse a valid pre-release.");
             }
         }
 

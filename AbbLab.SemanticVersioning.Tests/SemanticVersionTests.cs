@@ -30,14 +30,14 @@ namespace AbbLab.SemanticVersioning.Tests
                 Assert.Equal(parseResult, parseResultWithOptions, BuildMetadataComparer.Instance);
 
                 Assert.True(success, "Parse() parsed what TryParse() couldn't.");
-                if (!info.IsValid) throw new InvalidOperationException("Successfully parsed an invalid version.");
+                Assert.True(info.IsValid, "Successfully parsed an invalid version.");
                 Assert.Equal(tryParseResult, parseResult, BuildMetadataComparer.Instance!);
                 info.Assert(tryParseResult!);
             }
             catch (ArgumentException)
             {
                 Assert.False(success);
-                if (info.IsValid) throw;
+                Assert.False(info.IsValid);
             }
 
             // TryParse() uses StrictParse(), if options are Strict, so we're using this flag to bypass that
@@ -47,14 +47,14 @@ namespace AbbLab.SemanticVersioning.Tests
             {
                 SemanticVersion parseResult = SemanticVersion.Parse(info.Semantic, pseudoStrictMode);
                 Assert.True(success, "Parse() parsed what TryParse() couldn't.");
-                if (!info.IsValid) throw new InvalidOperationException("Successfully parsed an invalid version.");
+                Assert.True(info.IsValid, "Successfully parsed an invalid version.");
                 Assert.Equal(tryParseResult, parseResult, BuildMetadataComparer.Instance!);
                 info.Assert(tryParseResult!);
             }
             catch (ArgumentException)
             {
                 Assert.False(success);
-                if (info.IsValid) throw;
+                Assert.False(info.IsValid);
             }
         }
 
@@ -68,14 +68,14 @@ namespace AbbLab.SemanticVersioning.Tests
             {
                 SemanticVersion parseResult = SemanticVersion.Parse(info.Semantic, SemanticOptions.Loose);
                 Assert.True(success, "Parse() loosely parsed what TryParse() couldn't.");
-                if (!info.IsValidLoose) throw new InvalidOperationException("Successfully loosely parsed an invalid version.");
+                Assert.True(info.IsValidLoose, "Successfully loosely parsed an invalid version.");
                 Assert.Equal(tryParseResult, parseResult, BuildMetadataComparer.Instance!);
                 info.Assert(tryParseResult!);
             }
             catch (ArgumentException)
             {
                 Assert.False(success);
-                if (info.IsValidLoose) throw;
+                Assert.False(info.IsValidLoose);
             }
         }
 
