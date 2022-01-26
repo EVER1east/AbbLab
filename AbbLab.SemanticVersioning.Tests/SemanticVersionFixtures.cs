@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AbbLab.SemanticVersioning.Tests
 {
@@ -139,5 +141,166 @@ namespace AbbLab.SemanticVersioning.Tests
             new VersionTest("1.2.3+build.2147483648", 1, 2, 3, "+build", "2147483648"),
 
         });
+
+        public static readonly IEnumerable<object[]> FormatFixture = Util.Arrayify(new VersionFormatTest[]
+        {
+            new VersionFormatTest("1.2.3", "M.m.p", "1.2.3"),
+            new VersionFormatTest("1.2.3", "M.m.pp", "1.2.3"),
+            new VersionFormatTest("1.2.0", "M.m.pp", "1.2"),
+            new VersionFormatTest("1.2.3", "M.mm.pp", "1.2.3"),
+            new VersionFormatTest("1.2.0", "M.mm.pp", "1.2"),
+            new VersionFormatTest("1.0.0", "M.mm.pp", "1"),
+
+            new VersionFormatTest("1.0.0", "MM.mm.pp", "1"),
+            new VersionFormatTest("0.0.0", "MM.mm.pp", ""),
+
+            new VersionFormatTest("1.2.3-alpha.5+build.02", "M.m.p", "1.2.3"),
+            new VersionFormatTest("1.2.3-alpha.5+build.02", "M.m.p-ppp", "1.2.3-alpha.5"),
+            new VersionFormatTest("1.2.3-alpha.5+build.02", "M.m.p+mmm", "1.2.3+build.02"),
+
+            new VersionFormatTest("1.2.3", "M-m-p", "1-2-3"),
+            new VersionFormatTest("1.2.0", "M-m-pp", "1-2"),
+            new VersionFormatTest("1.0.0", "M-mm-pp", "1"),
+            new VersionFormatTest("1.2.3", @"M\-m\-p", "1-2-3"),
+            new VersionFormatTest("1.2.0", @"M\-m\-pp", "1-2-"),
+            new VersionFormatTest("1.0.0", @"M\-mm\-pp", "1--"),
+            new VersionFormatTest("1.2.3", @"M.m.p\-ppp", "1.2.3-"),
+            new VersionFormatTest("1.2.3", @"M.m.p\+mmm", "1.2.3+"),
+            new VersionFormatTest("1.2.3-alpha.5+build.02", @"M.m.p\-ppp", "1.2.3-alpha.5"),
+            new VersionFormatTest("1.2.3-alpha.5+build.02", @"M.m.p\+mmm", "1.2.3+build.02"),
+
+            new VersionFormatTest("1.2.3", @"M.test.mm.test.pp", "1.test.2.test.3"),
+            new VersionFormatTest("1.2.0", @"M.test.mm.test.pp", "1.test.2.test"),
+            new VersionFormatTest("1.0.0", @"M.test.mm.test.pp", "1.test.test"),
+
+        });
+
+        public static readonly string?[] SortFixture =
+        {
+            null,
+
+            "0.0.0-0",
+            "0.0.0-1",
+            "0.0.0-45",
+            "0.0.0-alpha",
+            "0.0.0-alpha.0",
+            "0.0.0-alpha.1",
+            "0.0.0-alpha.beta",
+            "0.0.0-rc.0",
+            "0.0.0-rc.0.0",
+            "0.0.0-rc.0.1",
+            "0.0.0-rc.1.0",
+            "0.0.0-rc.1.1",
+            "0.0.0",
+            "0.0.1-alpha",
+            "0.0.1",
+            "0.0.2-5",
+            "0.0.2",
+            "0.1.0-dev",
+            "0.1.0",
+
+            "1.0.0-beta.6",
+            "1.0.0",
+            "1.0.1-beta",
+            "1.0.1-rc.1",
+            "1.0.1",
+            "1.1.0-alpha",
+            "1.1.0-alpha.beta",
+            "1.1.0-alpha.beta.7",
+
+            "2.0.0-0",
+            "2.0.0-0.dev",
+            "2.0.0-0.dev.0",
+            "2.0.0-0.dev.5",
+            "2.0.0-1",
+            "2.0.0-1.rc",
+            "2.0.0-rc",
+            "2.0.0",
+
+        };
+
+    }
+    public readonly struct VersionFormatTest
+    {
+        public string Semantic { get; }
+        public string? Format { get; }
+        public string Expected { get; }
+
+        public VersionFormatTest(string semantic, string? format, string expected)
+        {
+            Semantic = semantic;
+            Format = format;
+            Expected = expected;
+        }
+    }
+    public readonly struct VersionTest
+    {
+        public string Semantic { get; }
+        public bool IsValid { get; }
+        public bool IsValidLoose { get; }
+        public int Major { get; }
+        public int Minor { get; }
+        public int Patch { get; }
+        public object[] PreReleases { get; }
+        public string[] BuildMetadata { get; }
+
+        public VersionTest(string semantic)
+        {
+            Semantic = semantic;
+            IsValid = false;
+            IsValidLoose = false;
+            Major = -1;
+            Minor = -1;
+            Patch = -1;
+            PreReleases = Array.Empty<object>();
+            BuildMetadata = Array.Empty<string>();
+        }
+        public VersionTest(string semantic, bool looseOnly, int major, int minor, int patch, params object[] identifiers)
+            : this(semantic, major, minor, patch, identifiers)
+        {
+            if (looseOnly)
+            {
+                IsValid = false;
+                IsValidLoose = true;
+            }
+        }
+        public VersionTest(string semantic, int major, int minor, int patch, params object[] identifiers)
+        {
+            Semantic = semantic;
+            IsValid = true;
+            IsValidLoose = true;
+            Major = major;
+            Minor = minor;
+            Patch = patch;
+
+            // build metadata begins with the first identifier with leading '+'
+            int metadataStart = Array.FindIndex(identifiers, static i => i is string str && str[0] == '+');
+            if (metadataStart is -1)
+            {
+                PreReleases = identifiers;
+                BuildMetadata = Array.Empty<string>();
+            }
+            else
+            {
+                PreReleases = identifiers[..metadataStart];
+                BuildMetadata = identifiers[metadataStart..].Cast<string>().ToArray();
+                BuildMetadata[0] = BuildMetadata[0][1..]; // remove the leading '+'
+            }
+        }
+
+        public void Assert(SemanticVersion version)
+        {
+            Xunit.Assert.Equal(Major, version.Major);
+            Xunit.Assert.Equal(Minor, version.Minor);
+            Xunit.Assert.Equal(Patch, version.Patch);
+            Xunit.Assert.Equal(PreReleases.Length, version.PreReleases.Count);
+            for (int i = 0, length = PreReleases.Length; i < length; i++)
+            {
+                SemanticPreRelease preRelease = version.PreReleases[i];
+                Xunit.Assert.Equal(PreReleases[i], preRelease.IsNumeric ? preRelease.Number : preRelease.Text);
+            }
+            Xunit.Assert.Equal(BuildMetadata, version.BuildMetadata);
+        }
+
     }
 }
