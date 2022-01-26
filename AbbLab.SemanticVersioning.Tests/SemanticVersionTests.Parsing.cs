@@ -192,33 +192,34 @@ namespace AbbLab.SemanticVersioning.Tests
 
         });
 
-    }
-    public readonly struct VersionParseTest
-    {
-        public string Semantic { get; }
-        public bool IsValid { get; }
-        public bool IsValidLoose { get; }
-        public int Major { get; }
-        public int Minor { get; }
-        public int Patch { get; }
-        public SemanticPreRelease[] PreReleases { get; }
-        public string[] BuildMetadata { get; }
-
-        public VersionParseTest(string semantic, bool isValid, bool isValidLoose, int major, int minor, int patch, params object[] identifiers)
+        public readonly struct VersionParseTest
         {
-            Semantic = semantic;
-            IsValid = isValid;
-            IsValidLoose = isValidLoose;
-            Major = major;
-            Minor = minor;
-            Patch = patch;
-            PreReleases = Util.SeparateIdentifiers(identifiers, out string[] buildMetadata);
-            BuildMetadata = buildMetadata;
-        }
+            public string Semantic { get; }
+            public bool IsValid { get; }
+            public bool IsValidLoose { get; }
+            public int Major { get; }
+            public int Minor { get; }
+            public int Patch { get; }
+            public SemanticPreRelease[] PreReleases { get; }
+            public string[] BuildMetadata { get; }
 
-        public string[] GetPreReleaseStrings()
-            => Array.ConvertAll(PreReleases, static p => p.ToString());
-        public void Assert(SemanticVersion version) => Util.AssertVersion(version, Major, Minor, Patch, PreReleases, BuildMetadata);
+            public VersionParseTest(string semantic, bool isValid, bool isValidLoose, int major, int minor, int patch, params object[] identifiers)
+            {
+                Semantic = semantic;
+                IsValid = isValid;
+                IsValidLoose = isValidLoose;
+                Major = major;
+                Minor = minor;
+                Patch = patch;
+                PreReleases = Util.SeparateIdentifiers(identifiers, out string[] buildMetadata);
+                BuildMetadata = buildMetadata;
+            }
+
+            public string[] GetPreReleaseStrings()
+                => Array.ConvertAll(PreReleases, static p => p.ToString());
+            public void Assert(SemanticVersion version) => Util.AssertVersion(version, Major, Minor, Patch, PreReleases, BuildMetadata);
+
+        }
 
     }
 }
