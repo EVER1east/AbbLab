@@ -42,6 +42,19 @@ namespace AbbLab.SemanticVersioning
         /// <summary>
         ///   <para>Initializes a new instance of the <see cref="SemanticPreRelease"/> structure with the specified <paramref name="identifier"/>.</para>
         /// </summary>
+        /// <param name="identifier">The read-only span of characters representing the pre-release identifier.</param>
+        /// <exception cref="ArgumentException"><paramref name="identifier"/> does not represent a valid pre-release identifier.</exception>
+        public SemanticPreRelease(ReadOnlySpan<char> identifier) => this = Parse(identifier);
+        /// <summary>
+        ///   <para>Initializes a new instance of the <see cref="SemanticPreRelease"/> structure with the specified <paramref name="identifier"/> using the specified <paramref name="options"/>.</para>
+        /// </summary>
+        /// <param name="identifier">The read-only span of characters representing the pre-release identifier.</param>
+        /// <param name="options">The semantic version parsing options to use.</param>
+        /// <exception cref="ArgumentException"><paramref name="identifier"/> does not represent a valid pre-release identifier.</exception>
+        public SemanticPreRelease(ReadOnlySpan<char> identifier, SemanticOptions options) => this = Parse(identifier, options);
+        /// <summary>
+        ///   <para>Initializes a new instance of the <see cref="SemanticPreRelease"/> structure with the specified <paramref name="identifier"/>.</para>
+        /// </summary>
         /// <param name="identifier">The numeric value of the pre-release identifier.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="identifier"/> is less than 0.</exception>
         public SemanticPreRelease(int identifier)
