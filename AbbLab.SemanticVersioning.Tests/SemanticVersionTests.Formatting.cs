@@ -74,6 +74,11 @@ namespace AbbLab.SemanticVersioning.Tests
             new VersionFormatTest("1.2.0", "M.test.mm.test.pp", "1.test.2.test"),
             new VersionFormatTest("1.0.0", "M.test.mm.test.pp", "1.test.test"),
 
+            new VersionFormatTest("1.23.456", "M.m.p", "1.23.456"),
+            new VersionFormatTest("1000.20000.300000", "M.m.p", "1000.20000.300000"),
+            new VersionFormatTest("4000000.50000000.600000000", "M.m.p", "4000000.50000000.600000000"),
+            new VersionFormatTest("2147483647.2147483647.2147483647", "M.m.p", "2147483647.2147483647.2147483647"),
+
         });
 
     }
