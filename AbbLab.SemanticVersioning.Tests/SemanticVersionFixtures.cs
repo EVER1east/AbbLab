@@ -255,19 +255,12 @@ namespace AbbLab.SemanticVersioning.Tests
             PreReleases = Array.Empty<object>();
             BuildMetadata = Array.Empty<string>();
         }
-        public VersionTest(string semantic, bool looseOnly, int major, int minor, int patch, params object[] identifiers)
-            : this(semantic, major, minor, patch, identifiers)
-        {
-            if (looseOnly)
-            {
-                IsValid = false;
-                IsValidLoose = true;
-            }
-        }
         public VersionTest(string semantic, int major, int minor, int patch, params object[] identifiers)
+            : this(semantic, false, major, minor, patch, identifiers) { }
+        public VersionTest(string semantic, bool looseOnly, int major, int minor, int patch, params object[] identifiers)
         {
             Semantic = semantic;
-            IsValid = true;
+            IsValid = !looseOnly;
             IsValidLoose = true;
             Major = major;
             Minor = minor;
