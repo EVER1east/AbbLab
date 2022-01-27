@@ -10,38 +10,30 @@ namespace AbbLab.SemanticVersioning.Tests
         [MemberData(nameof(ParseFixtures))]
         public void ParseTests(ParseFixture test)
         {
-            Output.WriteLine($"Parsing `{test.Input}`.");
+            Output.WriteLine($"Parsing `{test.Input}` pre-release identifier.");
             // Strict Parsing (string)
             {
                 bool success = SemanticPreRelease.TryParse(test.Input, out SemanticPreRelease preRelease);
                 Assert.Equal(test.IsValid, success);
-                if (success)
-                {
-                    Assert.Equal(test.Value, preRelease);
-                    if (!test.Value.IsNumeric) Assert.Same(test.Input, preRelease.Text); // no need to allocate a new string
-                }
+                if (success) Util.AssertPreRelease(preRelease, test.Value);
             }
             {
                 bool success = SemanticPreRelease.TryParse(test.Input, SemanticOptions.Strict, out SemanticPreRelease preRelease);
                 Assert.Equal(test.IsValid, success);
-                if (success)
-                {
-                    Assert.Equal(test.Value, preRelease);
-                    if (!test.Value.IsNumeric) Assert.Same(test.Input, preRelease.Text); // no need to allocate a new string
-                }
+                if (success) Util.AssertPreRelease(preRelease, test.Value);
             }
             if (test.IsValid)
             {
                 SemanticPreRelease preRelease = SemanticPreRelease.Parse(test.Input);
-                Assert.Equal(test.Value, preRelease);
-                if (!test.Value.IsNumeric) Assert.Same(test.Input, preRelease.Text); // no need to allocate a new string
+                Assert.Equal(test.PreRelease, preRelease);
+                Util.AssertPreRelease(preRelease, test.Value);
             }
             else Assert.Throws<ArgumentException>(() => SemanticPreRelease.Parse(test.Input));
             if (test.IsValid)
             {
                 SemanticPreRelease preRelease = SemanticPreRelease.Parse(test.Input, SemanticOptions.Strict);
-                Assert.Equal(test.Value, preRelease);
-                if (!test.Value.IsNumeric) Assert.Same(test.Input, preRelease.Text); // no need to allocate a new string
+                Assert.Equal(test.PreRelease, preRelease);
+                Util.AssertPreRelease(preRelease, test.Value);
             }
             else Assert.Throws<ArgumentException>(() => SemanticPreRelease.Parse(test.Input, SemanticOptions.Strict));
 
@@ -49,33 +41,25 @@ namespace AbbLab.SemanticVersioning.Tests
             {
                 bool success = SemanticPreRelease.TryParse(test.Input.AsSpan(), out SemanticPreRelease preRelease);
                 Assert.Equal(test.IsValid, success);
-                if (success)
-                {
-                    Assert.Equal(test.Value, preRelease);
-                    if (!test.Value.IsNumeric) Assert.NotSame(test.Input, preRelease.Text); // has to allocate a new string
-                }
+                if (success) Util.AssertPreRelease(preRelease, test.Value, false);
             }
             {
                 bool success = SemanticPreRelease.TryParse(test.Input.AsSpan(), SemanticOptions.Strict, out SemanticPreRelease preRelease);
                 Assert.Equal(test.IsValid, success);
-                if (success)
-                {
-                    Assert.Equal(test.Value, preRelease);
-                    if (!test.Value.IsNumeric) Assert.NotSame(test.Input, preRelease.Text); // has to allocate a new string
-                }
+                if (success) Util.AssertPreRelease(preRelease, test.Value, false);
             }
             if (test.IsValid)
             {
                 SemanticPreRelease preRelease = SemanticPreRelease.Parse(test.Input.AsSpan());
-                Assert.Equal(test.Value, preRelease);
-                if (!test.Value.IsNumeric) Assert.NotSame(test.Input, preRelease.Text); // has to allocate a new string
+                Assert.Equal(test.PreRelease, preRelease);
+                Util.AssertPreRelease(preRelease, test.Value, false);
             }
             else Assert.Throws<ArgumentException>(() => SemanticPreRelease.Parse(test.Input.AsSpan()));
             if (test.IsValid)
             {
                 SemanticPreRelease preRelease = SemanticPreRelease.Parse(test.Input.AsSpan(), SemanticOptions.Strict);
-                Assert.Equal(test.Value, preRelease);
-                if (!test.Value.IsNumeric) Assert.NotSame(test.Input, preRelease.Text); // has to allocate a new string
+                Assert.Equal(test.PreRelease, preRelease);
+                Util.AssertPreRelease(preRelease, test.Value, false);
             }
             else Assert.Throws<ArgumentException>(() => SemanticPreRelease.Parse(test.Input.AsSpan(), SemanticOptions.Strict));
 
@@ -83,17 +67,13 @@ namespace AbbLab.SemanticVersioning.Tests
             {
                 bool success = SemanticPreRelease.TryParse(test.Input, SemanticOptions.Loose, out SemanticPreRelease preRelease);
                 Assert.Equal(test.IsValidLoose, success);
-                if (success)
-                {
-                    Assert.Equal(test.Value, preRelease);
-                    if (!test.Value.IsNumeric) Assert.Same(test.Input, preRelease.Text); // no need to allocate a new string
-                }
+                if (success) Util.AssertPreRelease(preRelease, test.Value);
             }
             if (test.IsValidLoose)
             {
                 SemanticPreRelease preRelease = SemanticPreRelease.Parse(test.Input, SemanticOptions.Loose);
-                Assert.Equal(test.Value, preRelease);
-                if (!test.Value.IsNumeric) Assert.Same(test.Input, preRelease.Text); // no need to allocate a new string
+                Assert.Equal(test.PreRelease, preRelease);
+                Util.AssertPreRelease(preRelease, test.Value);
             }
             else Assert.Throws<ArgumentException>(() => SemanticPreRelease.Parse(test.Input, SemanticOptions.Loose));
 
@@ -101,17 +81,13 @@ namespace AbbLab.SemanticVersioning.Tests
             {
                 bool success = SemanticPreRelease.TryParse(test.Input.AsSpan(), SemanticOptions.Loose, out SemanticPreRelease preRelease);
                 Assert.Equal(test.IsValidLoose, success);
-                if (success)
-                {
-                    Assert.Equal(test.Value, preRelease);
-                    if (!test.Value.IsNumeric) Assert.NotSame(test.Input, preRelease.Text); // has to allocate a new string
-                }
+                if (success) Util.AssertPreRelease(preRelease, test.Value, false);
             }
             if (test.IsValidLoose)
             {
                 SemanticPreRelease preRelease = SemanticPreRelease.Parse(test.Input.AsSpan(), SemanticOptions.Loose);
-                Assert.Equal(test.Value, preRelease);
-                if (!test.Value.IsNumeric) Assert.NotSame(test.Input, preRelease.Text); // has to allocate a new string
+                Assert.Equal(test.PreRelease, preRelease);
+                Util.AssertPreRelease(preRelease, test.Value, false);
             }
             else Assert.Throws<ArgumentException>(() => SemanticPreRelease.Parse(test.Input.AsSpan(), SemanticOptions.Loose));
 
@@ -158,14 +134,16 @@ namespace AbbLab.SemanticVersioning.Tests
             public string Input { get; }
             public bool IsValid { get; }
             public bool IsValidLoose { get; }
-            public SemanticPreRelease Value { get; }
+            public SemanticPreRelease PreRelease { get; }
+            public object Value { get; }
 
-            public ParseFixture(string input, bool isValid, bool isValidLoose, SemanticPreRelease value)
+            public ParseFixture(string input, bool isValid, bool isValidLoose, SemanticPreRelease preRelease)
             {
                 Input = input;
                 IsValid = isValid;
                 IsValidLoose = isValidLoose;
-                Value = value;
+                PreRelease = preRelease;
+                Value = preRelease.IsNumeric ? preRelease.Number : preRelease.Text;
             }
 
         }

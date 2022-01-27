@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace AbbLab.SemanticVersioning.Tests
 {
@@ -30,13 +31,42 @@ namespace AbbLab.SemanticVersioning.Tests
                                          IEnumerable<SemanticPreRelease>? preReleases = null,
                                          IEnumerable<string>? buildMetadata = null)
         {
-            Xunit.Assert.Equal(major, version.Major);
-            Xunit.Assert.Equal(minor, version.Minor);
-            Xunit.Assert.Equal(patch, version.Patch);
-            if (preReleases is null) Xunit.Assert.Empty(version.PreReleases);
-            else Xunit.Assert.Equal(preReleases, version.PreReleases);
-            if (buildMetadata is null) Xunit.Assert.Empty(version.BuildMetadata);
-            else Xunit.Assert.Equal(buildMetadata, version.BuildMetadata);
+            Assert.Equal(major, version.Major);
+            Assert.Equal(minor, version.Minor);
+            Assert.Equal(patch, version.Patch);
+            if (preReleases is null) Assert.Empty(version.PreReleases);
+            else Assert.Equal(preReleases, version.PreReleases);
+            if (buildMetadata is null) Assert.Empty(version.BuildMetadata);
+            else Assert.Equal(buildMetadata, version.BuildMetadata);
+        }
+        public static void AssertPreRelease(SemanticPreRelease preRelease, int value)
+        {
+            Assert.True(preRelease.IsNumeric);
+            Assert.Equal(value, preRelease.Number);
+            Assert.Equal(value, (int)preRelease);
+            Assert.Throws<InvalidOperationException>(() => preRelease.Text);
+        }
+        public static void AssertPreRelease(SemanticPreRelease preRelease, string value, bool stringSource = true)
+        {
+            Assert.False(preRelease.IsNumeric);
+            Assert.Equal(value, preRelease.Text);
+            Assert.Equal(value, (string)preRelease);
+            if (stringSource)
+            {
+                Assert.Same(value, preRelease.Text);
+                Assert.Same(value, (string)preRelease);
+            }
+            else
+            {
+                Assert.NotSame(value, preRelease.Text);
+                Assert.NotSame(value, (string)preRelease);
+            }
+            Assert.Throws<InvalidOperationException>(() => preRelease.Number);
+        }
+        public static void AssertPreRelease(SemanticPreRelease preRelease, object value, bool stringSource = true)
+        {
+            if (value is string str) AssertPreRelease(preRelease, str, stringSource);
+            else AssertPreRelease(preRelease, (int)value);
         }
 
     }
