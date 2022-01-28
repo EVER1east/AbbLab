@@ -8,7 +8,7 @@ namespace AbbLab.SemanticVersioning.Tests
     {
         [Theory]
         [MemberData(nameof(ParseFixtures))]
-        public void ParseTests(VersionParseFixture test)
+        public void ParseTests(ParseFixture test)
         {
             Assert.True(test.IsFullyInitialized);
             Output.WriteLine($"Parsing `{test.Semantic}`.");
@@ -68,9 +68,9 @@ namespace AbbLab.SemanticVersioning.Tests
 
         }
 
-        private static VersionParseFixture New(string semantic) => new VersionParseFixture(semantic);
+        private static ParseFixture New(string semantic) => new ParseFixture(semantic);
 
-        public static readonly IEnumerable<object[]> ParseFixtures = Util.Arrayify(new VersionParseFixture[]
+        public static readonly IEnumerable<object[]> ParseFixtures = Util.Arrayify(new ParseFixture[]
         {
             // Helper methods:
             // New("string to parse")   - initializes a new fixture;
@@ -241,7 +241,7 @@ namespace AbbLab.SemanticVersioning.Tests
 
         private const string LeftoversException = "Encountered an unexpected character at ";
 
-        public struct VersionParseFixture
+        public struct ParseFixture
         {
             public string Semantic { get; }
 
@@ -263,7 +263,7 @@ namespace AbbLab.SemanticVersioning.Tests
             public readonly bool IsValid => ExceptionType is null;
             public readonly bool IsValidLoose => ExceptionTypeLoose is null;
 
-            public VersionParseFixture(string semantic) : this()
+            public ParseFixture(string semantic) : this()
             {
                 Major = -1;
                 Minor = -1;
@@ -273,7 +273,7 @@ namespace AbbLab.SemanticVersioning.Tests
                 Semantic = semantic;
             }
 
-            public VersionParseFixture Returns(int major, int minor, int patch, params object[] identifiers)
+            public ParseFixture Returns(int major, int minor, int patch, params object[] identifiers)
             {
                 Xunit.Assert.False(StrictSet || LooseSet);
                 StrictSet = true;
@@ -289,7 +289,7 @@ namespace AbbLab.SemanticVersioning.Tests
                 BuildMetadata = buildMetadata;
                 return this;
             }
-            public VersionParseFixture ReturnsLoose(int major, int minor, int patch, params object[] identifiers)
+            public ParseFixture ReturnsLoose(int major, int minor, int patch, params object[] identifiers)
             {
                 Xunit.Assert.False(LooseSet);
                 LooseSet = true;
@@ -303,11 +303,11 @@ namespace AbbLab.SemanticVersioning.Tests
                 return this;
             }
 
-            public VersionParseFixture Throws(string message)
+            public ParseFixture Throws(string message)
                 => Throws<ArgumentException, ArgumentException>(message, message);
-            public VersionParseFixture Throws(string messageStrict, string messageLoose)
+            public ParseFixture Throws(string messageStrict, string messageLoose)
                 => Throws<ArgumentException, ArgumentException>(messageStrict, messageLoose);
-            public VersionParseFixture Throws<TExceptionStrict, TExceptionLoose>(string messageStrict, string messageLoose)
+            public ParseFixture Throws<TExceptionStrict, TExceptionLoose>(string messageStrict, string messageLoose)
             {
                 Xunit.Assert.False(StrictSet || LooseSet);
                 StrictSet = true;
@@ -319,9 +319,9 @@ namespace AbbLab.SemanticVersioning.Tests
                 return this;
             }
 
-            public VersionParseFixture ThrowsStrict(string message)
+            public ParseFixture ThrowsStrict(string message)
                 => ThrowsStrict<ArgumentException>(message);
-            public VersionParseFixture ThrowsStrict<TException>(string message)
+            public ParseFixture ThrowsStrict<TException>(string message)
             {
                 Xunit.Assert.False(StrictSet);
                 StrictSet = true;

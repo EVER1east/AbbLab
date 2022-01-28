@@ -9,7 +9,7 @@ namespace AbbLab.SemanticVersioning.Tests
     {
         [Theory]
         [MemberData(nameof(ParseFixtures))]
-        public void ToStringTests(VersionParseFixture test)
+        public void ToStringTests(ParseFixture test)
         {
             if (test.IsValid) // check only semantically valid versions
             {
