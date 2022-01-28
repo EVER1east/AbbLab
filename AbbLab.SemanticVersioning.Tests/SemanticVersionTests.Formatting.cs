@@ -9,7 +9,7 @@ namespace AbbLab.SemanticVersioning.Tests
     {
         [Theory]
         [MemberData(nameof(ParseFixtures))]
-        public void ToStringTests(VersionParseTest test)
+        public void ToStringTests(VersionParseFixture test)
         {
             if (test.IsValid) // check only semantically valid versions
             {
@@ -32,7 +32,7 @@ namespace AbbLab.SemanticVersioning.Tests
 
         [Theory]
         [MemberData(nameof(FormatFixtures))]
-        public void FormatTests(VersionFormatTest test)
+        public void FormatTests(VersionFormatFixture test)
         {
             Output.WriteLine($"Formatting `{test.Semantic}` using `{test.Format}`.");
             SemanticVersion version = SemanticVersion.Parse(test.Semantic);
@@ -43,51 +43,51 @@ namespace AbbLab.SemanticVersioning.Tests
             Assert.Equal(test.Expected, format.ToString(test.Format, CultureInfo.InvariantCulture));
         }
 
-        public static readonly IEnumerable<object[]> FormatFixtures = Util.Arrayify(new VersionFormatTest[]
+        public static readonly IEnumerable<object[]> FormatFixtures = Util.Arrayify(new VersionFormatFixture[]
         {
-            new VersionFormatTest("1.2.3", "M.m.p", "1.2.3"),
-            new VersionFormatTest("1.2.3", "M.m.pp", "1.2.3"),
-            new VersionFormatTest("1.2.0", "M.m.pp", "1.2"),
-            new VersionFormatTest("1.2.3", "M.mm.pp", "1.2.3"),
-            new VersionFormatTest("1.2.0", "M.mm.pp", "1.2"),
-            new VersionFormatTest("1.0.0", "M.mm.pp", "1"),
+            new VersionFormatFixture("1.2.3", "M.m.p", "1.2.3"),
+            new VersionFormatFixture("1.2.3", "M.m.pp", "1.2.3"),
+            new VersionFormatFixture("1.2.0", "M.m.pp", "1.2"),
+            new VersionFormatFixture("1.2.3", "M.mm.pp", "1.2.3"),
+            new VersionFormatFixture("1.2.0", "M.mm.pp", "1.2"),
+            new VersionFormatFixture("1.0.0", "M.mm.pp", "1"),
 
-            new VersionFormatTest("1.0.0", "MM.mm.pp", "1"),
-            new VersionFormatTest("0.0.0", "MM.mm.pp", ""),
+            new VersionFormatFixture("1.0.0", "MM.mm.pp", "1"),
+            new VersionFormatFixture("0.0.0", "MM.mm.pp", ""),
 
-            new VersionFormatTest("1.2.3-alpha.5+build.02", "M.m.p", "1.2.3"),
-            new VersionFormatTest("1.2.3-alpha.5+build.02", "M.m.p-ppp", "1.2.3-alpha.5"),
-            new VersionFormatTest("1.2.3-alpha.5+build.02", "M.m.p+mmm", "1.2.3+build.02"),
+            new VersionFormatFixture("1.2.3-alpha.5+build.02", "M.m.p", "1.2.3"),
+            new VersionFormatFixture("1.2.3-alpha.5+build.02", "M.m.p-ppp", "1.2.3-alpha.5"),
+            new VersionFormatFixture("1.2.3-alpha.5+build.02", "M.m.p+mmm", "1.2.3+build.02"),
 
-            new VersionFormatTest("1.2.3", "M-m-p", "1-2-3"),
-            new VersionFormatTest("1.2.0", "M-m-pp", "1-2"),
-            new VersionFormatTest("1.0.0", "M-mm-pp", "1"),
-            new VersionFormatTest("1.2.3", @"M\-m\-p", "1-2-3"),
-            new VersionFormatTest("1.2.0", @"M\-m\-pp", "1-2-"),
-            new VersionFormatTest("1.0.0", @"M\-mm\-pp", "1--"),
-            new VersionFormatTest("1.2.3", @"M.m.p\-ppp", "1.2.3-"),
-            new VersionFormatTest("1.2.3", @"M.m.p\+mmm", "1.2.3+"),
-            new VersionFormatTest("1.2.3-alpha.5+build.02", @"M.m.p\-ppp", "1.2.3-alpha.5"),
-            new VersionFormatTest("1.2.3-alpha.5+build.02", @"M.m.p\+mmm", "1.2.3+build.02"),
+            new VersionFormatFixture("1.2.3", "M-m-p", "1-2-3"),
+            new VersionFormatFixture("1.2.0", "M-m-pp", "1-2"),
+            new VersionFormatFixture("1.0.0", "M-mm-pp", "1"),
+            new VersionFormatFixture("1.2.3", @"M\-m\-p", "1-2-3"),
+            new VersionFormatFixture("1.2.0", @"M\-m\-pp", "1-2-"),
+            new VersionFormatFixture("1.0.0", @"M\-mm\-pp", "1--"),
+            new VersionFormatFixture("1.2.3", @"M.m.p\-ppp", "1.2.3-"),
+            new VersionFormatFixture("1.2.3", @"M.m.p\+mmm", "1.2.3+"),
+            new VersionFormatFixture("1.2.3-alpha.5+build.02", @"M.m.p\-ppp", "1.2.3-alpha.5"),
+            new VersionFormatFixture("1.2.3-alpha.5+build.02", @"M.m.p\+mmm", "1.2.3+build.02"),
 
-            new VersionFormatTest("1.2.3", "M.test.mm.test.pp", "1.test.2.test.3"),
-            new VersionFormatTest("1.2.0", "M.test.mm.test.pp", "1.test.2.test"),
-            new VersionFormatTest("1.0.0", "M.test.mm.test.pp", "1.test.test"),
+            new VersionFormatFixture("1.2.3", "M.test.mm.test.pp", "1.test.2.test.3"),
+            new VersionFormatFixture("1.2.0", "M.test.mm.test.pp", "1.test.2.test"),
+            new VersionFormatFixture("1.0.0", "M.test.mm.test.pp", "1.test.test"),
 
-            new VersionFormatTest("1.23.456", "M.m.p", "1.23.456"),
-            new VersionFormatTest("1000.20000.300000", "M.m.p", "1000.20000.300000"),
-            new VersionFormatTest("4000000.50000000.600000000", "M.m.p", "4000000.50000000.600000000"),
-            new VersionFormatTest("2147483647.2147483647.2147483647", "M.m.p", "2147483647.2147483647.2147483647"),
+            new VersionFormatFixture("1.23.456", "M.m.p", "1.23.456"),
+            new VersionFormatFixture("1000.20000.300000", "M.m.p", "1000.20000.300000"),
+            new VersionFormatFixture("4000000.50000000.600000000", "M.m.p", "4000000.50000000.600000000"),
+            new VersionFormatFixture("2147483647.2147483647.2147483647", "M.m.p", "2147483647.2147483647.2147483647"),
 
         });
 
-        public readonly struct VersionFormatTest
+        public readonly struct VersionFormatFixture
         {
             public string Semantic { get; }
             public string? Format { get; }
             public string Expected { get; }
 
-            public VersionFormatTest(string semantic, string? format, string expected)
+            public VersionFormatFixture(string semantic, string? format, string expected)
             {
                 Semantic = semantic;
                 Format = format;

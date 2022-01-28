@@ -66,22 +66,22 @@ namespace AbbLab.SemanticVersioning.Tests
         }
 
         private static ParseFixture Strict(string input, object value)
-            => new ParseFixture(input, true, true, value);
-        private static ParseFixture Loose(string input, object value)
-            => new ParseFixture(input, false, true, value);
-        private static ParseFixture Invalid(string input)
-            => new ParseFixture(input, false, false, null);
+            => new ParseFixture(input, true, true, value, null);
+        private static ParseFixture Loose(string input, object value, string expectedExceptionMessage)
+            => new ParseFixture(input, false, true, value, expectedExceptionMessage);
+        private static ParseFixture Invalid(string input, string expectedExceptionMessage)
+            => new ParseFixture(input, false, false, null, expectedExceptionMessage);
 
         public static readonly IEnumerable<object[]> ParseFixtures = Util.Arrayify(new ParseFixture[]
         {
             Strict("0", 0),
-            Loose("00", 0),
-            Loose("0000", 0),
+            Loose("00", 0, Exceptions.PreReleaseLeadingZeroes),
+            Loose("0000", 0, Exceptions.PreReleaseLeadingZeroes),
             Strict("1", 1),
             Strict("2", 2),
             Strict("12", 12),
             Strict("123", 123),
-            Loose("0123", 123),
+            Loose("0123", 123, Exceptions.PreReleaseLeadingZeroes),
             Strict("-0123", "-0123"),
             Strict("00-", "00-"),
             Strict("00a", "00a"),
@@ -90,11 +90,11 @@ namespace AbbLab.SemanticVersioning.Tests
             Strict("alpha", "alpha"),
             Strict("alpha7beta", "alpha7beta"),
             Strict("--alpha-beta-", "--alpha-beta-"),
-            Invalid(""),
-            Invalid("$$"),
+            Invalid("", Exceptions.PreReleaseEmpty),
+            Invalid("$$", Exceptions.PreReleaseInvalid),
             Strict("2147483647", 2147483647),
             Strict("-2147483648", "-2147483648"),
-            Invalid("2147483648"),
+            Invalid("2147483648", Exceptions.PreReleaseTooBig),
         });
 
         public readonly struct ParseFixture
@@ -103,13 +103,15 @@ namespace AbbLab.SemanticVersioning.Tests
             public bool IsValid { get; }
             public bool IsValidLoose { get; }
             public object? Value { get; }
+            public string? ExpectedExceptionMessage { get; }
 
-            public ParseFixture(string input, bool isValid, bool isValidLoose, object? value)
+            public ParseFixture(string input, bool isValid, bool isValidLoose, object? value, string? expectedExceptionMessage)
             {
                 Input = input;
                 IsValid = isValid;
                 IsValidLoose = isValidLoose;
                 Value = value;
+                ExpectedExceptionMessage = expectedExceptionMessage;
             }
 
         }

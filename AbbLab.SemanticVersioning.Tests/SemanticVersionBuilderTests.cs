@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
@@ -87,32 +88,29 @@ namespace AbbLab.SemanticVersioning.Tests
             if (test.IsValid)
             {
                 builder.Increment(test.Type, test.Identifier);
-                Assert.Equal(test.Expected, builder.ToVersion(), BuildMetadataComparer.Instance!);
+                Assert.Equal(test.Expected, builder.ToVersion(), BuildMetadataComparer.Instance);
             }
             else
             {
-                Assert.Throws<InvalidOperationException>(() => builder.Increment(test.Type, test.Identifier));
+                Assert.Throws(test.ExceptionType!, () => builder.Increment(test.Type, test.Identifier));
             }
         }
-
-
-
-
 
         private static IncrementFixture Valid(string version, IncrementType type, string expected)
             => new IncrementFixture(version, type, null, expected);
         private static IncrementFixture Valid(string version, IncrementType type, string? identifier, string expected)
             => new IncrementFixture(version, type, identifier, expected);
-        private static IncrementFixture Invalid(string version, IncrementType type)
-            => new IncrementFixture(version, type, null, null);
-        private static IncrementFixture Invalid(string version, IncrementType type, string? identifier)
-            => new IncrementFixture(version, type, identifier, null);
-
+        private static IncrementFixture Invalid<TException>(string version, IncrementType type)
+            => new IncrementFixture(version, type, null, typeof(TException));
+        private static IncrementFixture Invalid<TException>(string version, IncrementType type, string? identifier)
+            => new IncrementFixture(version, type, identifier, typeof(TException));
 
         public static readonly IEnumerable<object[]> IncrementFixtures = Util.Arrayify(new IncrementFixture[]
         {
             // None
             Valid("1.2.3-alpha.7.beta", IncrementType.None, "1.2.3-alpha.7.beta"),
+            // Invalid
+            Invalid<ArgumentException>("1.2.3", (IncrementType)407080),
 
             // Major increment
             Valid("0.1.2", IncrementType.Major, "1.0.0"),
@@ -120,19 +118,19 @@ namespace AbbLab.SemanticVersioning.Tests
             Valid("1.2.3", IncrementType.Major, "2.0.0"),
             Valid("1.2.3-alpha", IncrementType.Major, "2.0.0"),
             Valid("2147483647.0.0-alpha", IncrementType.Major, "2147483647.0.0"),
-            Invalid("2147483647.2.3", IncrementType.Major),
+            Invalid<InvalidOperationException>("2147483647.2.3", IncrementType.Major),
             // Minor increment
             Valid("0.0.1", IncrementType.Minor, "0.1.0"),
             Valid("0.1.0", IncrementType.Minor, "0.2.0"),
             Valid("1.2.3", IncrementType.Minor, "1.3.0"),
             Valid("1.2147483647.0-alpha", IncrementType.Minor, "1.2147483647.0"),
-            Invalid("1.2147483647.3", IncrementType.Minor),
+            Invalid<InvalidOperationException>("1.2147483647.3", IncrementType.Minor),
             // Patch increment
             Valid("0.0.1", IncrementType.Patch, "0.0.2"),
             Valid("0.1.0", IncrementType.Patch, "0.1.1"),
             Valid("1.2.3", IncrementType.Patch, "1.2.4"),
             Valid("1.2.2147483647-alpha", IncrementType.Patch, "1.2.2147483647"),
-            Invalid("1.2.2147483647", IncrementType.Patch),
+            Invalid<InvalidOperationException>("1.2.2147483647", IncrementType.Patch),
 
             // Pre-Major increment
             Valid("0.0.0", IncrementType.PreMajor, "1.0.0-0"),
@@ -145,8 +143,8 @@ namespace AbbLab.SemanticVersioning.Tests
             Valid("2.0.0-alpha", IncrementType.PreMajor, "0", "3.0.0-0"),
             Valid("2.0.0-alpha", IncrementType.PreMajor, "17", "3.0.0-17.0"),
             Valid("2.0.0-alpha", IncrementType.PreMajor, "rc", "3.0.0-rc.0"),
-            Invalid("2147483647.2.3", IncrementType.PreMajor),
-            Invalid("2147483647.2.3-0", IncrementType.PreMajor),
+            Invalid<InvalidOperationException>("2147483647.2.3", IncrementType.PreMajor),
+            Invalid<InvalidOperationException>("2147483647.2.3-0", IncrementType.PreMajor),
             // Pre-Minor increment
             Valid("0.0.0", IncrementType.PreMinor, "0.1.0-0"),
             Valid("0.0.0-0", IncrementType.PreMinor, "0.1.0-0"),
@@ -158,8 +156,8 @@ namespace AbbLab.SemanticVersioning.Tests
             Valid("2.3.0-alpha", IncrementType.PreMinor, "0", "2.4.0-0"),
             Valid("2.3.0-alpha", IncrementType.PreMinor, "17", "2.4.0-17.0"),
             Valid("2.3.0-alpha", IncrementType.PreMinor, "rc", "2.4.0-rc.0"),
-            Invalid("1.2147483647.3", IncrementType.PreMinor),
-            Invalid("1.2147483647.3-0", IncrementType.PreMinor),
+            Invalid<InvalidOperationException>("1.2147483647.3", IncrementType.PreMinor),
+            Invalid<InvalidOperationException>("1.2147483647.3-0", IncrementType.PreMinor),
             // Pre-Patch increment
             Valid("0.0.0", IncrementType.PrePatch, "0.0.1-0"),
             Valid("0.0.0-0", IncrementType.PrePatch, "0.0.1-0"),
@@ -171,8 +169,8 @@ namespace AbbLab.SemanticVersioning.Tests
             Valid("2.3.4-alpha", IncrementType.PrePatch, "0", "2.3.5-0"),
             Valid("2.3.4-alpha", IncrementType.PrePatch, "17", "2.3.5-17.0"),
             Valid("2.3.4-alpha", IncrementType.PrePatch, "rc", "2.3.5-rc.0"),
-            Invalid("1.2.2147483647", IncrementType.PrePatch),
-            Invalid("1.2.2147483647-0", IncrementType.PrePatch),
+            Invalid<InvalidOperationException>("1.2.2147483647", IncrementType.PrePatch),
+            Invalid<InvalidOperationException>("1.2.2147483647-0", IncrementType.PrePatch),
 
             // Pre-Release increment (numeric increment)
             Valid("0.0.0", IncrementType.PreRelease, "0.0.1-0"),
@@ -198,19 +196,19 @@ namespace AbbLab.SemanticVersioning.Tests
             Valid("1.2.3-0.beta", IncrementType.PreRelease, "beta", "1.2.3-beta.0"),
 
             // Pre-Release increment (numeric limits for components)
-            Invalid("1.2.2147483647", IncrementType.PreRelease),
-            Invalid("1.2.2147483647", IncrementType.PreRelease, "beta"),
+            Invalid<InvalidOperationException>("1.2.2147483647", IncrementType.PreRelease),
+            Invalid<InvalidOperationException>("1.2.2147483647", IncrementType.PreRelease, "beta"),
             Valid("1.2.2147483647-0", IncrementType.PreRelease, "1.2.2147483647-1"),
             Valid("1.2.2147483647-alpha", IncrementType.PreRelease, "1.2.2147483647-alpha.0"),
             Valid("1.2.2147483647-alpha.0", IncrementType.PreRelease, "1.2.2147483647-alpha.1"),
             Valid("1.2.2147483647-alpha.4", IncrementType.PreRelease, "1.2.2147483647-alpha.5"),
             // Pre-Release increment (numeric limits for pre-release identifiers)
-            Invalid("1.2.3-2147483647", IncrementType.PreRelease),
-            Invalid("1.2.3-2147483647", IncrementType.PreRelease, "0"),
+            Invalid<InvalidOperationException>("1.2.3-2147483647", IncrementType.PreRelease),
+            Invalid<InvalidOperationException>("1.2.3-2147483647", IncrementType.PreRelease, "0"),
             Valid("1.2.3-2147483647", IncrementType.PreRelease, "beta", "1.2.3-beta.0"),
             Valid("1.2.3-2147483647", IncrementType.PreRelease, "2147483647", "1.2.3-2147483647.0"),
             Valid("1.2.3-2147483647.0", IncrementType.PreRelease, "2147483647", "1.2.3-2147483647.1"),
-            Invalid("1.2.3-2147483647.2147483647", IncrementType.PreRelease, "2147483647"),
+            Invalid<InvalidOperationException>("1.2.3-2147483647.2147483647", IncrementType.PreRelease, "2147483647"),
 
         });
 
@@ -220,15 +218,26 @@ namespace AbbLab.SemanticVersioning.Tests
             public IncrementType Type { get; }
             public string? Identifier { get; }
             public SemanticVersion? Expected { get; }
-            public bool IsValid { get; }
+            public Type? ExceptionType { get; }
 
-            public IncrementFixture(string version, IncrementType type, string? identifier, string? expected)
+            [MemberNotNullWhen(true, nameof(Expected))]
+            public bool IsValid => ExceptionType is null;
+
+            public IncrementFixture(string version, IncrementType type, string? identifier, string expected)
             {
                 Version = SemanticVersion.Parse(version);
                 Type = type;
                 Identifier = identifier;
-                Expected = expected is not null ? SemanticVersion.Parse(expected) : null;
-                IsValid = expected is not null;
+                Expected = SemanticVersion.Parse(expected);
+                ExceptionType = null;
+            }
+            public IncrementFixture(string version, IncrementType type, string? identifier, Type exceptionType)
+            {
+                Version = SemanticVersion.Parse(version);
+                Type = type;
+                Identifier = identifier;
+                Expected = null;
+                ExceptionType = exceptionType;
             }
 
         }
