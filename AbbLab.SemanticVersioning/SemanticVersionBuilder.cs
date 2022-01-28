@@ -583,5 +583,21 @@ namespace AbbLab.SemanticVersioning
             return this;
         }
 
+        public SemanticVersionBuilder Increment(IncrementType increment)
+            => Increment(increment, SemanticPreRelease.Zero);
+        public SemanticVersionBuilder Increment(IncrementType increment, string? identifier)
+            => Increment(increment, identifier is null ? SemanticPreRelease.Zero : SemanticPreRelease.Parse(identifier));
+        public SemanticVersionBuilder Increment(IncrementType increment, SemanticPreRelease preRelease) => increment switch
+        {
+            IncrementType.Major => IncrementMajor(),
+            IncrementType.Minor => IncrementMinor(),
+            IncrementType.Patch => IncrementPatch(),
+            IncrementType.PreMajor => IncrementPreMajor(preRelease),
+            IncrementType.PreMinor => IncrementPreMinor(preRelease),
+            IncrementType.PrePatch => IncrementPrePatch(preRelease),
+            IncrementType.PreRelease => IncrementPreRelease(preRelease),
+            _ => throw new ArgumentException($"Invalid {nameof(IncrementType)} value.", nameof(increment)),
+        };
+
     }
 }
