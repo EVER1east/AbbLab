@@ -11,98 +11,66 @@ namespace AbbLab.SemanticVersioning.Tests
         public void ParseTests(ParseFixture test)
         {
             Output.WriteLine($"Parsing `{test.Input}` pre-release identifier.");
-            // Strict Parsing (string)
-            {
-                bool success = SemanticPreRelease.TryParse(test.Input, out SemanticPreRelease preRelease);
-                Assert.Equal(test.IsValid, success);
-                if (success) Util.AssertPreRelease(preRelease, test.Value);
-            }
-            {
-                bool success = SemanticPreRelease.TryParse(test.Input, SemanticOptions.Strict, out SemanticPreRelease preRelease);
-                Assert.Equal(test.IsValid, success);
-                if (success) Util.AssertPreRelease(preRelease, test.Value);
-            }
-            if (test.IsValid)
-            {
-                SemanticPreRelease preRelease = SemanticPreRelease.Parse(test.Input);
-                Assert.Equal(test.PreRelease, preRelease);
-                Util.AssertPreRelease(preRelease, test.Value);
-            }
-            else Assert.Throws<ArgumentException>(() => SemanticPreRelease.Parse(test.Input));
-            if (test.IsValid)
-            {
-                SemanticPreRelease preRelease = SemanticPreRelease.Parse(test.Input, SemanticOptions.Strict);
-                Assert.Equal(test.PreRelease, preRelease);
-                Util.AssertPreRelease(preRelease, test.Value);
-            }
-            else Assert.Throws<ArgumentException>(() => SemanticPreRelease.Parse(test.Input, SemanticOptions.Strict));
+            const SemanticOptions pseudoStrictMode = (SemanticOptions)int.MinValue;
 
-            // Strict Parsing (span)
+            // Strict TryParse
+            AssertEx.Identical(test.IsValid, new Parser<SemanticPreRelease>[]
             {
-                bool success = SemanticPreRelease.TryParse(test.Input.AsSpan(), out SemanticPreRelease preRelease);
-                Assert.Equal(test.IsValid, success);
-                if (success) Util.AssertPreRelease(preRelease, test.Value, false);
-            }
+                (out SemanticPreRelease p) => SemanticPreRelease.TryParse(test.Input, out p),
+                (out SemanticPreRelease p) => SemanticPreRelease.TryParse(test.Input, SemanticOptions.Strict, out p),
+                (out SemanticPreRelease p) => SemanticPreRelease.TryParse(test.Input, pseudoStrictMode, out p),
+            }, p => AssertEx.PreRelease(p, test.Value));
+            // String TryParse (span)
+            AssertEx.Identical(test.IsValid, new Parser<SemanticPreRelease>[]
             {
-                bool success = SemanticPreRelease.TryParse(test.Input.AsSpan(), SemanticOptions.Strict, out SemanticPreRelease preRelease);
-                Assert.Equal(test.IsValid, success);
-                if (success) Util.AssertPreRelease(preRelease, test.Value, false);
-            }
-            if (test.IsValid)
-            {
-                SemanticPreRelease preRelease = SemanticPreRelease.Parse(test.Input.AsSpan());
-                Assert.Equal(test.PreRelease, preRelease);
-                Util.AssertPreRelease(preRelease, test.Value, false);
-            }
-            else Assert.Throws<ArgumentException>(() => SemanticPreRelease.Parse(test.Input.AsSpan()));
-            if (test.IsValid)
-            {
-                SemanticPreRelease preRelease = SemanticPreRelease.Parse(test.Input.AsSpan(), SemanticOptions.Strict);
-                Assert.Equal(test.PreRelease, preRelease);
-                Util.AssertPreRelease(preRelease, test.Value, false);
-            }
-            else Assert.Throws<ArgumentException>(() => SemanticPreRelease.Parse(test.Input.AsSpan(), SemanticOptions.Strict));
+                (out SemanticPreRelease p) => SemanticPreRelease.TryParse(test.Input.AsSpan(), out p),
+                (out SemanticPreRelease p) => SemanticPreRelease.TryParse(test.Input.AsSpan(), SemanticOptions.Strict, out p),
+                (out SemanticPreRelease p) => SemanticPreRelease.TryParse(test.Input.AsSpan(), pseudoStrictMode, out p),
+            }, p => AssertEx.PreRelease(p, test.Value, true));
 
-            // Loose Parsing (string)
+            // Strict Parse
+            AssertEx.Identical<SemanticPreRelease, ArgumentException>(test.IsValid, new Func<SemanticPreRelease>[]
             {
-                bool success = SemanticPreRelease.TryParse(test.Input, SemanticOptions.Loose, out SemanticPreRelease preRelease);
-                Assert.Equal(test.IsValidLoose, success);
-                if (success) Util.AssertPreRelease(preRelease, test.Value);
-            }
-            if (test.IsValidLoose)
+                () => SemanticPreRelease.Parse(test.Input),
+                () => SemanticPreRelease.Parse(test.Input, SemanticOptions.Strict),
+                () => SemanticPreRelease.Parse(test.Input, pseudoStrictMode),
+                () => new SemanticPreRelease(test.Input),
+                () => new SemanticPreRelease(test.Input, SemanticOptions.Strict),
+                () => new SemanticPreRelease(test.Input, pseudoStrictMode),
+                () => test.Input, // implicit
+            }, p => AssertEx.PreRelease(p, test.Value));
+            // Strict Parse (span)
+            AssertEx.Identical<SemanticPreRelease, ArgumentException>(test.IsValid, new Func<SemanticPreRelease>[]
             {
-                SemanticPreRelease preRelease = SemanticPreRelease.Parse(test.Input, SemanticOptions.Loose);
-                Assert.Equal(test.PreRelease, preRelease);
-                Util.AssertPreRelease(preRelease, test.Value);
-            }
-            else Assert.Throws<ArgumentException>(() => SemanticPreRelease.Parse(test.Input, SemanticOptions.Loose));
+                () => SemanticPreRelease.Parse(test.Input.AsSpan()),
+                () => SemanticPreRelease.Parse(test.Input.AsSpan(), SemanticOptions.Strict),
+                () => SemanticPreRelease.Parse(test.Input.AsSpan(), pseudoStrictMode),
+                () => new SemanticPreRelease(test.Input.AsSpan()),
+                () => new SemanticPreRelease(test.Input.AsSpan(), SemanticOptions.Strict),
+                () => new SemanticPreRelease(test.Input.AsSpan(), pseudoStrictMode),
+                () => test.Input.AsSpan(), // implicit
+            }, p => AssertEx.PreRelease(p, test.Value, true));
 
-            // Loose Parsing (span)
+            // Loose TryParse
+            AssertEx.Identical(test.IsValidLoose, new Parser<SemanticPreRelease>[]
             {
-                bool success = SemanticPreRelease.TryParse(test.Input.AsSpan(), SemanticOptions.Loose, out SemanticPreRelease preRelease);
-                Assert.Equal(test.IsValidLoose, success);
-                if (success) Util.AssertPreRelease(preRelease, test.Value, false);
-            }
-            if (test.IsValidLoose)
+                (out SemanticPreRelease p) => SemanticPreRelease.TryParse(test.Input.AsSpan(), SemanticOptions.Loose, out p),
+            }, p => AssertEx.PreRelease(p, test.Value, true));
+            // Loose Parse
+            AssertEx.Identical<SemanticPreRelease, ArgumentException>(test.IsValidLoose, new Func<SemanticPreRelease>[]
             {
-                SemanticPreRelease preRelease = SemanticPreRelease.Parse(test.Input.AsSpan(), SemanticOptions.Loose);
-                Assert.Equal(test.PreRelease, preRelease);
-                Util.AssertPreRelease(preRelease, test.Value, false);
-            }
-            else Assert.Throws<ArgumentException>(() => SemanticPreRelease.Parse(test.Input.AsSpan(), SemanticOptions.Loose));
+                () => SemanticPreRelease.Parse(test.Input.AsSpan(), SemanticOptions.Loose),
+                () => new SemanticPreRelease(test.Input.AsSpan(), SemanticOptions.Loose),
+            }, p => AssertEx.PreRelease(p, test.Value, true));
 
         }
 
-        private static ParseFixture Strict(string input, int value)
+        private static ParseFixture Strict(string input, object value)
             => new ParseFixture(input, true, true, value);
-        private static ParseFixture Strict(string input, string value)
-            => new ParseFixture(input, true, true, value);
-        private static ParseFixture Loose(string input, int value)
-            => new ParseFixture(input, false, true, value);
-        private static ParseFixture Loose(string input, string value)
+        private static ParseFixture Loose(string input, object value)
             => new ParseFixture(input, false, true, value);
         private static ParseFixture Invalid(string input)
-            => new ParseFixture(input, false, false, default);
+            => new ParseFixture(input, false, false, null);
 
         public static readonly IEnumerable<object[]> ParseFixtures = Util.Arrayify(new ParseFixture[]
         {
@@ -134,16 +102,14 @@ namespace AbbLab.SemanticVersioning.Tests
             public string Input { get; }
             public bool IsValid { get; }
             public bool IsValidLoose { get; }
-            public SemanticPreRelease PreRelease { get; }
-            public object Value { get; }
+            public object? Value { get; }
 
-            public ParseFixture(string input, bool isValid, bool isValidLoose, SemanticPreRelease preRelease)
+            public ParseFixture(string input, bool isValid, bool isValidLoose, object? value)
             {
                 Input = input;
                 IsValid = isValid;
                 IsValidLoose = isValidLoose;
-                PreRelease = preRelease;
-                Value = preRelease.IsNumeric ? preRelease.Number : preRelease.Text;
+                Value = value;
             }
 
         }

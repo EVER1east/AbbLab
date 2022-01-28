@@ -58,10 +58,10 @@ namespace AbbLab.SemanticVersioning.Tests
         [Fact]
         public void ConversionTest()
         {
-            Util.AssertVersion((SemanticVersion)new Version(), 0, 0, 0);
-            Util.AssertVersion((SemanticVersion)new Version(12, 34), 12, 34, 0);
-            Util.AssertVersion((SemanticVersion)new Version(12, 34, 56), 12, 34, 56);
-            Util.AssertVersion((SemanticVersion)new Version(12, 34, 56, 78), 12, 34, 56);
+            AssertEx.Version((SemanticVersion)new Version(), 0, 0, 0);
+            AssertEx.Version((SemanticVersion)new Version(12, 34), 12, 34, 0);
+            AssertEx.Version((SemanticVersion)new Version(12, 34, 56), 12, 34, 56);
+            AssertEx.Version((SemanticVersion)new Version(12, 34, 56, 78), 12, 34, 56);
 
             Version systemVersion = (Version)new SemanticVersion(4, 0, 0);
             Assert.Equal(4, systemVersion.Major);

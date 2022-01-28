@@ -217,7 +217,7 @@ namespace AbbLab.SemanticVersioning.Tests
 
             public string[] GetPreReleaseStrings()
                 => Array.ConvertAll(PreReleases, static p => p.ToString());
-            public void Assert(SemanticVersion version) => Util.AssertVersion(version, Major, Minor, Patch, PreReleases, BuildMetadata);
+            public void Assert(SemanticVersion version) => AssertEx.Version(version, Major, Minor, Patch, PreReleases, BuildMetadata);
 
         }
 
