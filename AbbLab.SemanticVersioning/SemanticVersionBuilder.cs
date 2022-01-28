@@ -324,7 +324,9 @@ namespace AbbLab.SemanticVersioning
         /// <exception cref="ArgumentException"><paramref name="identifiers"/> contains an invalid string representation of a pre-release identifier.</exception>
         public SemanticVersionBuilder AppendPreReleases([InstantHandle] IEnumerable<string> identifiers)
         {
-            (_preReleases ??= new List<SemanticPreRelease>()).AddRange(identifiers.Select(SemanticPreRelease.Parse));
+            SemanticPreRelease[] preReleases = Array.ConvertAll(identifiers.ToArray(), SemanticPreRelease.Parse);
+            if (preReleases.Length > 0)
+                (_preReleases ??= new List<SemanticPreRelease>()).AddRange(preReleases);
             return this;
         }
         /// <summary>
@@ -334,7 +336,9 @@ namespace AbbLab.SemanticVersioning
         /// <returns>A reference to this instance after the operation.</returns>
         public SemanticVersionBuilder AppendPreReleases([InstantHandle] IEnumerable<SemanticPreRelease> preReleases)
         {
-            (_preReleases ??= new List<SemanticPreRelease>()).AddRange(preReleases);
+            SemanticPreRelease[] array = preReleases.ToArray();
+            if (array.Length > 0)
+                (_preReleases ??= new List<SemanticPreRelease>()).AddRange(array);
             return this;
         }
 
@@ -361,13 +365,19 @@ namespace AbbLab.SemanticVersioning
         /// <exception cref="ArgumentException"><paramref name="identifiers"/> contains an invalid build metadata identifier.</exception>
         public SemanticVersionBuilder AppendBuildMetadata([InstantHandle] IEnumerable<string> identifiers)
         {
-            foreach (string identifier in identifiers)
+            string[] array = identifiers.ToArray();
+            int length = array.Length;
+            if (length > 0)
             {
-                if (identifier.Length is 0)
-                    throw new ArgumentException(Exceptions.BuildMetadataEmpty, nameof(identifiers));
-                if (!Util.ContainsOnlyValidCharacters(identifier))
-                    throw new ArgumentException(Exceptions.BuildMetadataInvalid, nameof(identifiers));
-                (_buildMetadata ??= new List<string>()).Add(identifier);
+                for (int i = 0; i < length; i++)
+                {
+                    string identifier = array[i];
+                    if (identifier.Length is 0)
+                        throw new ArgumentException(Exceptions.BuildMetadataEmpty, nameof(identifiers));
+                    if (!Util.ContainsOnlyValidCharacters(identifier))
+                        throw new ArgumentException(Exceptions.BuildMetadataInvalid, nameof(identifiers));
+                }
+                (_buildMetadata ??= new List<string>()).AddRange(array);
             }
             return this;
         }
