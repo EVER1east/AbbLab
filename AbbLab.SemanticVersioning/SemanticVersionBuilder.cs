@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using JetBrains.Annotations;
 using System.Linq;
 
@@ -56,6 +57,26 @@ namespace AbbLab.SemanticVersioning
 
         private List<SemanticPreRelease>? _preReleases;
         private List<string>? _buildMetadata;
+        private ReadOnlyCollection<SemanticPreRelease>? _preReleasesReadonly;
+        private ReadOnlyCollection<string>? _buildMetadataReadonly;
+        public ReadOnlyCollection<SemanticPreRelease> PreReleases
+        {
+            get
+            {
+                if (_preReleasesReadonly is not null) return _preReleasesReadonly;
+                _preReleases ??= new List<SemanticPreRelease>();
+                return _preReleasesReadonly = new ReadOnlyCollection<SemanticPreRelease>(_preReleases);
+            }
+        }
+        public ReadOnlyCollection<string> BuildMetadata
+        {
+            get
+            {
+                if (_buildMetadataReadonly is not null) return _buildMetadataReadonly;
+                _buildMetadata ??= new List<string>();
+                return _buildMetadataReadonly = new ReadOnlyCollection<string>(_buildMetadata);
+            }
+        }
 
         /// <summary>
         ///   <para>Initializes a new instance of the <see cref="SemanticVersionBuilder"/> class.</para>
@@ -123,8 +144,8 @@ namespace AbbLab.SemanticVersioning
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="major"/>, <paramref name="minor"/> or <paramref name="patch"/> is less than 0.</exception>
         /// <exception cref="ArgumentException"><paramref name="preReleases"/> contains an invalid string representation of a pre-release identifier, or <paramref name="buildMetadata"/> contains an invalid build metadata identifier.</exception>
         public SemanticVersionBuilder(int major, int minor, int patch,
-                               [InstantHandle] IEnumerable<string>? preReleases,
-                               [InstantHandle] IEnumerable<string>? buildMetadata)
+                                      [InstantHandle] IEnumerable<string>? preReleases,
+                                      [InstantHandle] IEnumerable<string>? buildMetadata)
         {
             if (major < 0) throw new ArgumentOutOfRangeException(nameof(major), major, Exceptions.MajorNegative);
             if (minor < 0) throw new ArgumentOutOfRangeException(nameof(minor), minor, Exceptions.MinorNegative);
@@ -149,8 +170,8 @@ namespace AbbLab.SemanticVersioning
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="major"/>, <paramref name="minor"/> or <paramref name="patch"/> is less than 0.</exception>
         /// <exception cref="ArgumentException"><paramref name="buildMetadata"/> contains an invalid build metadata identifier.</exception>
         public SemanticVersionBuilder(int major, int minor, int patch,
-                               [InstantHandle] IEnumerable<SemanticPreRelease>? preReleases,
-                               [InstantHandle] IEnumerable<string>? buildMetadata)
+                                      [InstantHandle] IEnumerable<SemanticPreRelease>? preReleases,
+                                      [InstantHandle] IEnumerable<string>? buildMetadata)
         {
             if (major < 0) throw new ArgumentOutOfRangeException(nameof(major), major, Exceptions.MajorNegative);
             if (minor < 0) throw new ArgumentOutOfRangeException(nameof(minor), minor, Exceptions.MinorNegative);
