@@ -464,8 +464,13 @@ namespace AbbLab.SemanticVersioning
         /// <exception cref="InvalidOperationException"><see cref="Patch"/> or the numeric value of the right-most numeric pre-release identifier is equal to <see cref="int.MaxValue"/> and cannot be incremented.</exception>
         public SemanticVersionBuilder IncrementPreRelease(SemanticPreRelease preRelease)
         {
+            // NOTE:
+            // The implementation of this method is kind of vague and doesn't cover all of the cases in node-semver,
+            // and I just copied the implementation from there. so there may be some strange cases.
+
             if (_preReleases is null || _preReleases.Count is 0)
             {
+                // if this is not a pre-release version, just increment patch and add a '0' pre-release:
                 // 1.2.3 → 1.2.4-0 or 1.2.4-alpha.0
                 int newPatch = _patch + 1;
                 if (newPatch < 0) throw new InvalidOperationException(Exceptions.PatchTooBig);
@@ -475,9 +480,10 @@ namespace AbbLab.SemanticVersioning
                 if (preRelease != SemanticPreRelease.Zero)
                     _preReleases.Add(SemanticPreRelease.Zero);
             }
-            else if (preRelease == SemanticPreRelease.Zero || _preReleases[0].Equals(preRelease))
+            else if (preRelease == SemanticPreRelease.Zero)
             {
-                // increment the right-most numeric pre-release identifier:
+                // (default behaviour) simply increment the right-most numeric pre-release identifier:
+                // 1.2.3-0 (0) → 1.2.3-1
                 // 1.2.3-4 → 1.2.3-5
                 // 1.2.3-4.alpha.6.beta → 1.2.3-4.alpha.7.beta
                 for (int i = _preReleases.Count - 1; i >= 0; i--)
@@ -492,9 +498,34 @@ namespace AbbLab.SemanticVersioning
                 // 1.2.3-alpha → 1.2.3-alpha.0
                 _preReleases.Add(SemanticPreRelease.Zero);
             }
+            else if (_preReleases[0].Equals(preRelease))
+            {
+                // if the specified pre-release identifier is the same as the current one, then…
+
+                // if there's a right-most numeric pre-release identifier (excluding the specified one), increment it:
+                // 1.2.3-beta.3 (beta) → 1.2.3-beta.4
+                // 1.2.3-beta.3.gamma (beta) → 1.2.3-beta.4.gamma
+                // 1.2.3-2022.3 (2022) → 1.2.3-2022.4
+                for (int i = _preReleases.Count - 1; i >= 1; i--)
+                    if (_preReleases[i].IsNumeric)
+                    {
+                        int newNumber = _preReleases[i].Number + 1;
+                        if (newNumber < 0) throw new InvalidOperationException(Exceptions.PreReleaseTooBig);
+                        _preReleases[i] = new SemanticPreRelease(newNumber);
+                        return this;
+                    }
+                // otherwise, ensure that there are only two identifiers - the specified one and a numeric one:
+                // 1.2.3-beta (beta) → 1.2.3-beta.0
+                // 1.2.3-beta.alpha (beta) → 1.2.3-beta.0
+                // 1.2.3-2022 (2022) → 1.2.3-2022.0
+                // 1.2.3-2022.alpha (2022) → 1.2.3-2022.0
+                if (_preReleases.Count > 1)
+                    _preReleases.RemoveRange(1, _preReleases.Count - 1);
+                _preReleases.Add(SemanticPreRelease.Zero);
+            }
             else
             {
-                // if the specified pre-release identifier is different from the current one:
+                // if the specified pre-release identifier is different from the current one, change it:
                 // 1.2.3-alpha.5 (beta) → 1.2.3-beta.0
                 _preReleases.Clear();
                 _preReleases.Add(preRelease);
