@@ -583,10 +583,27 @@ namespace AbbLab.SemanticVersioning
             return this;
         }
 
+        /// <summary>
+        ///   <para>Increments the version of this instance with the specified <paramref name="increment"/> type.</para>
+        /// </summary>
+        /// <param name="increment">The semantic version increment type.</param>
+        /// <returns>A reference to this instance after the operation.</returns>
         public SemanticVersionBuilder Increment(IncrementType increment)
             => Increment(increment, SemanticPreRelease.Zero);
+        /// <summary>
+        ///   <para>Increments the version of this instance with the specified <paramref name="increment"/> type and <paramref name="identifier"/>.</para>
+        /// </summary>
+        /// <param name="increment">The semantic version increment type.</param>
+        /// <param name="identifier">The string representation of a pre-release identifier to use.</param>
+        /// <returns>A reference to this instance after the operation.</returns>
         public SemanticVersionBuilder Increment(IncrementType increment, string? identifier)
             => Increment(increment, identifier is null ? SemanticPreRelease.Zero : SemanticPreRelease.Parse(identifier));
+        /// <summary>
+        ///   <para>Increments the version of this instance with the specified <paramref name="increment"/> type and <paramref name="preRelease"/>.</para>
+        /// </summary>
+        /// <param name="increment">The semantic version increment type.</param>
+        /// <param name="preRelease">The pre-release identifier to use.</param>
+        /// <returns>A reference to this instance after the operation.</returns>
         public SemanticVersionBuilder Increment(IncrementType increment, SemanticPreRelease preRelease) => increment switch
         {
             IncrementType.Major => IncrementMajor(),
