@@ -18,6 +18,10 @@ namespace AbbLab.SemanticVersioning.Tests
 
             // Strings "-1", "-123" and "-2147483648" are valid though, because they're considered alphanumeric.
             // (see ParseTests)
+
+            AssertEx.PreRelease(default, 0);
+            AssertEx.PreRelease(new SemanticPreRelease(), 0);
+
         }
 
     }
