@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 using Xunit.Sdk;
 
@@ -19,6 +20,24 @@ namespace AbbLab.SemanticVersioning.Tests
             if (buildMetadata is null) Assert.Empty(version.BuildMetadata);
             else Assert.Equal(buildMetadata, version.BuildMetadata);
         }
+        public static void Builder(SemanticVersionBuilder builder, int major, int minor, int patch,
+                                   IEnumerable<SemanticPreRelease>? preReleases = null,
+                                   IEnumerable<string>? buildMetadata = null)
+        {
+            SemanticPreRelease[]? preReleasesArray = preReleases?.ToArray();
+            string[]? buildMetadataArray = buildMetadata?.ToArray();
+
+            Version(builder.ToVersion(), major, minor, patch, preReleasesArray, buildMetadataArray);
+
+            Assert.Equal(major, builder.Major);
+            Assert.Equal(minor, builder.Minor);
+            Assert.Equal(patch, builder.Patch);
+            if (preReleasesArray is null) Assert.Empty(builder.PreReleases);
+            else Assert.Equal(preReleasesArray, builder.PreReleases);
+            if (buildMetadataArray is null) Assert.Empty(builder.BuildMetadata);
+            else Assert.Equal(buildMetadataArray, builder.BuildMetadata);
+        }
+
         public static void PreRelease(SemanticPreRelease preRelease, int number)
         {
             Assert.True(preRelease.IsNumeric);
