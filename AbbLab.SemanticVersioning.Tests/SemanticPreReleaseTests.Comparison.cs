@@ -84,6 +84,9 @@ namespace AbbLab.SemanticVersioning.Tests
             "10",
             "100",
             "2147483647",
+            "-",
+            "--",
+            "-rc",
             "a",
             "alpha",
             "b",
@@ -91,6 +94,7 @@ namespace AbbLab.SemanticVersioning.Tests
             "dev",
             "nightly",
             "rc",
+            "rc-",
             "zzz",
         };
     }
