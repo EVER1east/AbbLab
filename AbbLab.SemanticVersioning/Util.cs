@@ -149,6 +149,8 @@ namespace AbbLab.SemanticVersioning
 
             SemanticErrorCode.BuildMetadataNotFound => Exceptions.BuildMetadataNotFound,
 
+            SemanticErrorCode.Leftovers => Exceptions.EncounteredInvalidCharacter,
+
             _ => throw new ArgumentException($"Invalid {nameof(SemanticErrorCode)}.", nameof(code)),
         };
     }

@@ -28,5 +28,7 @@
         public const string BuildMetadataEmpty = "The build metadata identifier cannot be empty.";
         public const string BuildMetadataInvalid = "The build metadata identifier must only contain [0-9A-Za-z-] characters.";
 
+        public const string EncounteredInvalidCharacter = "Encountered an unexpected character at the end of the string.";
+
     }
 }
