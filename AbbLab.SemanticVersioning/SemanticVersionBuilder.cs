@@ -246,7 +246,7 @@ namespace AbbLab.SemanticVersioning
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="major"/> is less than 0.</exception>
         public SemanticVersionBuilder WithMajor(int major)
         {
-            if (_major < 0) throw new ArgumentOutOfRangeException(nameof(major), major, Exceptions.MajorNegative);
+            if (major < 0) throw new ArgumentOutOfRangeException(nameof(major), major, Exceptions.MajorNegative);
             _major = major;
             return this;
         }
@@ -258,7 +258,7 @@ namespace AbbLab.SemanticVersioning
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="minor"/> is less than 0.</exception>
         public SemanticVersionBuilder WithMinor(int minor)
         {
-            if (_minor < 0) throw new ArgumentOutOfRangeException(nameof(minor), minor, Exceptions.MinorNegative);
+            if (minor < 0) throw new ArgumentOutOfRangeException(nameof(minor), minor, Exceptions.MinorNegative);
             _minor = minor;
             return this;
         }
@@ -270,7 +270,7 @@ namespace AbbLab.SemanticVersioning
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="patch"/> is less than 0.</exception>
         public SemanticVersionBuilder WithPatch(int patch)
         {
-            if (_patch < 0) throw new ArgumentOutOfRangeException(nameof(patch), patch, Exceptions.PatchNegative);
+            if (patch < 0) throw new ArgumentOutOfRangeException(nameof(patch), patch, Exceptions.PatchNegative);
             _patch = patch;
             return this;
         }
