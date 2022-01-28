@@ -6,6 +6,10 @@
     public enum IncrementType
     {
         /// <summary>
+        ///   <para>Doesn't do any changes to the version.</para>
+        /// </summary>
+        None,
+        /// <summary>
         ///   <para>Bumps the version to the next major version.</para>
         /// </summary>
         Major,

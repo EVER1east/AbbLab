@@ -606,6 +606,7 @@ namespace AbbLab.SemanticVersioning
         /// <returns>A reference to this instance after the operation.</returns>
         public SemanticVersionBuilder Increment(IncrementType increment, SemanticPreRelease preRelease) => increment switch
         {
+            IncrementType.None => this,
             IncrementType.Major => IncrementMajor(),
             IncrementType.Minor => IncrementMinor(),
             IncrementType.Patch => IncrementPatch(),
