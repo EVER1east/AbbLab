@@ -154,19 +154,19 @@ namespace AbbLab.SemanticVersioning.Tests
             New("1.2.3", IncrementType.Major).Returns("2.0.0"),
             New("1.2.3-alpha", IncrementType.Major).Returns("2.0.0"),
             New("2147483647.0.0-alpha", IncrementType.Major).Returns("2147483647.0.0"),
-            New("2147483647.2.3", IncrementType.Major).Throws<InvalidOperationException>(Exceptions.MajorTooBig),
+            New("2147483647.2.3", IncrementType.Major).Throws(Exceptions.MajorTooBig),
             // Minor increment
             New("0.0.1", IncrementType.Minor).Returns("0.1.0"),
             New("0.1.0", IncrementType.Minor).Returns("0.2.0"),
             New("1.2.3", IncrementType.Minor).Returns("1.3.0"),
             New("1.2147483647.0-alpha", IncrementType.Minor).Returns("1.2147483647.0"),
-            New("1.2147483647.3", IncrementType.Minor).Throws<InvalidOperationException>(Exceptions.MinorTooBig),
+            New("1.2147483647.3", IncrementType.Minor).Throws(Exceptions.MinorTooBig),
             // Patch increment
             New("0.0.1", IncrementType.Patch).Returns("0.0.2"),
             New("0.1.0", IncrementType.Patch).Returns("0.1.1"),
             New("1.2.3", IncrementType.Patch).Returns("1.2.4"),
             New("1.2.2147483647-alpha", IncrementType.Patch).Returns("1.2.2147483647"),
-            New("1.2.2147483647", IncrementType.Patch).Throws<InvalidOperationException>(Exceptions.PatchTooBig),
+            New("1.2.2147483647", IncrementType.Patch).Throws(Exceptions.PatchTooBig),
 
             // Pre-Major increment
             New("0.0.0", IncrementType.PreMajor).Returns("1.0.0-0"),
@@ -179,8 +179,8 @@ namespace AbbLab.SemanticVersioning.Tests
             New("2.0.0-alpha", IncrementType.PreMajor, "0").Returns("3.0.0-0"),
             New("2.0.0-alpha", IncrementType.PreMajor, "17").Returns("3.0.0-17.0"),
             New("2.0.0-alpha", IncrementType.PreMajor, "rc").Returns("3.0.0-rc.0"),
-            New("2147483647.2.3", IncrementType.PreMajor).Throws<InvalidOperationException>(Exceptions.MajorTooBig),
-            New("2147483647.2.3-0", IncrementType.PreMajor).Throws<InvalidOperationException>(Exceptions.MajorTooBig),
+            New("2147483647.2.3", IncrementType.PreMajor).Throws(Exceptions.MajorTooBig),
+            New("2147483647.2.3-0", IncrementType.PreMajor).Throws(Exceptions.MajorTooBig),
             // Pre-Minor increment
             New("0.0.0", IncrementType.PreMinor).Returns("0.1.0-0"),
             New("0.0.0-0", IncrementType.PreMinor).Returns("0.1.0-0"),
@@ -192,8 +192,8 @@ namespace AbbLab.SemanticVersioning.Tests
             New("2.3.0-alpha", IncrementType.PreMinor, "0").Returns("2.4.0-0"),
             New("2.3.0-alpha", IncrementType.PreMinor, "17").Returns("2.4.0-17.0"),
             New("2.3.0-alpha", IncrementType.PreMinor, "rc").Returns("2.4.0-rc.0"),
-            New("1.2147483647.3", IncrementType.PreMinor).Throws<InvalidOperationException>(Exceptions.MinorTooBig),
-            New("1.2147483647.3-0", IncrementType.PreMinor).Throws<InvalidOperationException>(Exceptions.MinorTooBig),
+            New("1.2147483647.3", IncrementType.PreMinor).Throws(Exceptions.MinorTooBig),
+            New("1.2147483647.3-0", IncrementType.PreMinor).Throws(Exceptions.MinorTooBig),
             // Pre-Patch increment
             New("0.0.0", IncrementType.PrePatch).Returns("0.0.1-0"),
             New("0.0.0-0", IncrementType.PrePatch).Returns("0.0.1-0"),
@@ -205,8 +205,8 @@ namespace AbbLab.SemanticVersioning.Tests
             New("2.3.4-alpha", IncrementType.PrePatch, "0").Returns("2.3.5-0"),
             New("2.3.4-alpha", IncrementType.PrePatch, "17").Returns("2.3.5-17.0"),
             New("2.3.4-alpha", IncrementType.PrePatch, "rc").Returns("2.3.5-rc.0"),
-            New("1.2.2147483647", IncrementType.PrePatch).Throws<InvalidOperationException>(Exceptions.PatchTooBig),
-            New("1.2.2147483647-0", IncrementType.PrePatch).Throws<InvalidOperationException>(Exceptions.PatchTooBig),
+            New("1.2.2147483647", IncrementType.PrePatch).Throws(Exceptions.PatchTooBig),
+            New("1.2.2147483647-0", IncrementType.PrePatch).Throws(Exceptions.PatchTooBig),
 
             // Pre-Release increment (numeric increment)
             New("0.0.0", IncrementType.PreRelease).Returns("0.0.1-0"),
@@ -232,20 +232,20 @@ namespace AbbLab.SemanticVersioning.Tests
             New("1.2.3-0.beta", IncrementType.PreRelease, "beta").Returns("1.2.3-beta.0"),
 
             // Pre-Release increment (numeric limits for components)
-            New("1.2.2147483647", IncrementType.PreRelease).Throws<InvalidOperationException>(Exceptions.PatchTooBig),
-            New("1.2.2147483647", IncrementType.PreRelease, "beta").Throws<InvalidOperationException>(Exceptions.PatchTooBig),
+            New("1.2.2147483647", IncrementType.PreRelease).Throws(Exceptions.PatchTooBig),
+            New("1.2.2147483647", IncrementType.PreRelease, "beta").Throws(Exceptions.PatchTooBig),
             New("1.2.2147483647-0", IncrementType.PreRelease).Returns("1.2.2147483647-1"),
             New("1.2.2147483647-alpha", IncrementType.PreRelease).Returns("1.2.2147483647-alpha.0"),
             New("1.2.2147483647-alpha.0", IncrementType.PreRelease).Returns("1.2.2147483647-alpha.1"),
             New("1.2.2147483647-alpha.4", IncrementType.PreRelease).Returns("1.2.2147483647-alpha.5"),
             // Pre-Release increment (numeric limits for pre-release identifiers)
-            New("1.2.3-2147483647", IncrementType.PreRelease).Throws<InvalidOperationException>(Exceptions.PreReleaseTooBig),
-            New("1.2.3-2147483647", IncrementType.PreRelease, "0").Throws<InvalidOperationException>(Exceptions.PreReleaseTooBig),
+            New("1.2.3-2147483647", IncrementType.PreRelease).Throws(Exceptions.PreReleaseTooBig),
+            New("1.2.3-2147483647", IncrementType.PreRelease, "0").Throws(Exceptions.PreReleaseTooBig),
             New("1.2.3-2147483647", IncrementType.PreRelease, "beta").Returns("1.2.3-beta.0"),
             New("1.2.3-2147483647", IncrementType.PreRelease, "2147483647").Returns("1.2.3-2147483647.0"),
             New("1.2.3-2147483647.0", IncrementType.PreRelease, "2147483647").Returns("1.2.3-2147483647.1"),
             New("1.2.3-2147483647.2147483647", IncrementType.PreRelease, "2147483647")
-                .Throws<InvalidOperationException>(Exceptions.PreReleaseTooBig),
+                .Throws(Exceptions.PreReleaseTooBig),
 
         });
 
@@ -275,7 +275,7 @@ namespace AbbLab.SemanticVersioning.Tests
                 return this;
             }
             public IncrementFixture Throws(string message)
-                => Throws<ArgumentException>(message);
+                => Throws<InvalidOperationException>(message);
             public IncrementFixture Throws<TException>(string message)
             {
                 Assert.Null(Expected);
