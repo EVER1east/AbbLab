@@ -50,39 +50,6 @@ namespace AbbLab.SemanticVersioning.Tests
             Assert.NotEqual(builder.PreReleases, copy.PreReleases);
             Assert.NotEqual(builder.BuildMetadata, copy.BuildMetadata);
 
-
-        }
-
-        public struct ConstructorFixture
-        {
-            public int Major { get; }
-            public int Minor { get; }
-            public int Patch { get; }
-            public SemanticPreRelease[] PreReleases { get; }
-            public string[] BuildMetadata { get; }
-
-            public Type? ExceptionType { get; private set; }
-            public string? ExceptionMessage { get; private set; }
-
-            public readonly bool IsValid => ExceptionType is null;
-
-            public ConstructorFixture(int major, int minor, int patch, params object[] identifiers) : this()
-            {
-                Major = major;
-                Minor = minor;
-                Patch = patch;
-                PreReleases = Util.SeparateIdentifiers(identifiers, out string[] buildMetadata);
-                BuildMetadata = buildMetadata;
-            }
-
-            public ConstructorFixture Throws<TException>(string message)
-            {
-                ExceptionType = typeof(TException);
-                ExceptionMessage = message;
-                return this;
-            }
-
-
         }
 
     }
