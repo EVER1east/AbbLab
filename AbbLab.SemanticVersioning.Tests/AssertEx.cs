@@ -20,19 +20,19 @@ namespace AbbLab.SemanticVersioning.Tests
             else Assert.Equal(buildMetadata, version.BuildMetadata);
         }
         public static void Builder(SemanticVersionBuilder builder, int major, int minor, int patch,
-                                   IEnumerable<SemanticPreRelease> preReleases,
-                                   IEnumerable<string> buildMetadata)
+                                   IEnumerable<SemanticPreRelease>? preReleases = null,
+                                   IEnumerable<string>? buildMetadata = null)
         {
-            SemanticPreRelease[] preReleasesArray = preReleases.ToArray();
-            string[] buildMetadataArray = buildMetadata.ToArray();
+            SemanticPreRelease[]? preReleasesArray = preReleases?.ToArray();
+            string[]? buildMetadataArray = buildMetadata?.ToArray();
 
             Version(builder.ToVersion(), major, minor, patch, preReleasesArray, buildMetadataArray);
 
             Assert.Equal(major, builder.Major);
             Assert.Equal(minor, builder.Minor);
             Assert.Equal(patch, builder.Patch);
-            Assert.Equal(preReleasesArray, builder.PreReleases);
-            Assert.Equal(buildMetadataArray, builder.BuildMetadata);
+            Assert.Equal(preReleasesArray ?? Array.Empty<SemanticPreRelease>(), builder.PreReleases);
+            Assert.Equal(buildMetadataArray ?? Array.Empty<string>(), builder.BuildMetadata);
         }
 
         public static void PreRelease(SemanticPreRelease preRelease, int number)
