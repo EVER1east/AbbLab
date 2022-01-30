@@ -42,7 +42,7 @@ namespace AbbLab.SemanticVersioning
         /// <exception cref="ArgumentException"><paramref name="text"/> does not represent a valid partial version.</exception>
         [Pure] public static PartialVersion Parse(ReadOnlySpan<char> text, SemanticOptions options)
         {
-            if (options == SemanticOptions.Strict) return Parse(text);
+            // if (options == SemanticOptions.Strict) return Parse(text);
 
             StringParser parser = new StringParser(text);
 
@@ -94,7 +94,7 @@ namespace AbbLab.SemanticVersioning
         /// <returns><see langword="true"/>, if the <paramref name="text"/> parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         [Pure] public static bool TryParse(ReadOnlySpan<char> text, SemanticOptions options, [NotNullWhen(true)] out PartialVersion? version)
         {
-            if (options == SemanticOptions.Strict) return TryParse(text, out version);
+            // if (options == SemanticOptions.Strict) return TryParse(text, out version);
 
             StringParser parser = new StringParser(text);
 
