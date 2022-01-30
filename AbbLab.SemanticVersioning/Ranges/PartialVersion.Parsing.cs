@@ -8,12 +8,38 @@ namespace AbbLab.SemanticVersioning
 {
     public partial class PartialVersion
     {
+        /// <summary>
+        ///   <para>Converts the specified string representation of a partial version to an equivalent <see cref="PartialVersion"/> object.</para>
+        /// </summary>
+        /// <param name="text">The string representation of a partial version.</param>
+        /// <returns>A value that is equivalent to the partial version specified in the <paramref name="text"/>.</returns>
+        /// <exception cref="ArgumentException"><paramref name="text"/> does not represent a valid partial version.</exception>
         [Pure] public static PartialVersion Parse(string text)
             => Parse(text.AsSpan(), SemanticOptions.Strict);
+        /// <summary>
+        ///   <para>Converts the specified string representation of a partial version to an equivalent <see cref="PartialVersion"/> object using the specified parsing <paramref name="options"/>.</para>
+        /// </summary>
+        /// <param name="text">The string representation of a partial version.</param>
+        /// <param name="options">The semantic version parsing options to use.</param>
+        /// <returns>A value that is equivalent to the partial version specified in the <paramref name="text"/>.</returns>
+        /// <exception cref="ArgumentException"><paramref name="text"/> does not represent a valid partial version.</exception>
         [Pure] public static PartialVersion Parse(string text, SemanticOptions options)
             => Parse(text.AsSpan(), options);
+        /// <summary>
+        ///   <para>Converts the specified read-only span of characters representing a partial version to an equivalent <see cref="PartialVersion"/> object.</para>
+        /// </summary>
+        /// <param name="text">The read-only span of characters representing a partial version.</param>
+        /// <returns>A value that is equivalent to the partial version specified in the <paramref name="text"/>.</returns>
+        /// <exception cref="ArgumentException"><paramref name="text"/> does not represent a valid partial version.</exception>
         [Pure] public static PartialVersion Parse(ReadOnlySpan<char> text)
             => Parse(text, SemanticOptions.Strict);
+        /// <summary>
+        ///   <para>Converts the specified read-only span of characters representing a partial version to an equivalent <see cref="PartialVersion"/> object using the specified parsing <paramref name="options"/>.</para>
+        /// </summary>
+        /// <param name="text">The read-only span of characters representing a partial version.</param>
+        /// <param name="options">The semantic version parsing options to use.</param>
+        /// <returns>A value that is equivalent to the partial version specified in the <paramref name="text"/>.</returns>
+        /// <exception cref="ArgumentException"><paramref name="text"/> does not represent a valid partial version.</exception>
         [Pure] public static PartialVersion Parse(ReadOnlySpan<char> text, SemanticOptions options)
         {
             if (options == SemanticOptions.Strict) return Parse(text);
@@ -34,12 +60,38 @@ namespace AbbLab.SemanticVersioning
             return version!;
         }
 
+        /// <summary>
+        ///   <para>Tries to convert the specified string representation of a partial version to an equivalent <see cref="PartialVersion"/> object, and returns a value that indicates whether the conversion succeeded.</para>
+        /// </summary>
+        /// <param name="text">The string representation of a partial version.</param>
+        /// <param name="version">When this method returns, contains the <see cref="PartialVersion"/> equivalent of the partial version specified in the <paramref name="text"/>, if the conversion succeeded, or <see langword="null"/> if the conversion failed.</param>
+        /// <returns><see langword="true"/>, if the <paramref name="text"/> parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         [Pure] public static bool TryParse(string text, [NotNullWhen(true)] out PartialVersion? version)
             => TryParse(text.AsSpan(), SemanticOptions.Strict, out version);
+        /// <summary>
+        ///   <para>Tries to convert the specified string representation of a partial version to an equivalent <see cref="PartialVersion"/> object using the specified parsing <paramref name="options"/>, and returns a value that indicates whether the conversion succeeded.</para>
+        /// </summary>
+        /// <param name="text">The string representation of a partial version.</param>
+        /// <param name="options">The semantic version parsing options to use.</param>
+        /// <param name="version">When this method returns, contains the <see cref="PartialVersion"/> equivalent of the partial version specified in the <paramref name="text"/>, if the conversion succeeded, or <see langword="null"/> if the conversion failed.</param>
+        /// <returns><see langword="true"/>, if the <paramref name="text"/> parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         [Pure] public static bool TryParse(string text, SemanticOptions options, [NotNullWhen(true)] out PartialVersion? version)
             => TryParse(text.AsSpan(), options, out version);
+        /// <summary>
+        ///   <para>Tries to convert the specified read-only span of characters representing a partial version to an equivalent <see cref="PartialVersion"/> object, and returns a value that indicates whether the conversion succeeded.</para>
+        /// </summary>
+        /// <param name="text">The read-only span of characters representing a partial version.</param>
+        /// <param name="version">When this method returns, contains the <see cref="PartialVersion"/> equivalent of the partial version specified in the <paramref name="text"/>, if the conversion succeeded, or <see langword="null"/> if the conversion failed.</param>
+        /// <returns><see langword="true"/>, if the <paramref name="text"/> parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         [Pure] public static bool TryParse(ReadOnlySpan<char> text, [NotNullWhen(true)] out PartialVersion? version)
             => TryParse(text, SemanticOptions.Strict, out version);
+        /// <summary>
+        ///   <para>Tries to convert the specified read-only span of characters representing a partial version to an equivalent <see cref="PartialVersion"/> object using the specified parsing <paramref name="options"/>, and returns a value that indicates whether the conversion succeeded.</para>
+        /// </summary>
+        /// <param name="text">The read-only span of characters representing a partial version.</param>
+        /// <param name="options">The semantic version parsing options to use.</param>
+        /// <param name="version">When this method returns, contains the <see cref="PartialVersion"/> equivalent of the partial version specified in the <paramref name="text"/>, if the conversion succeeded, or <see langword="null"/> if the conversion failed.</param>
+        /// <returns><see langword="true"/>, if the <paramref name="text"/> parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         [Pure] public static bool TryParse(ReadOnlySpan<char> text, SemanticOptions options, [NotNullWhen(true)] out PartialVersion? version)
         {
             if (options == SemanticOptions.Strict) return TryParse(text, out version);

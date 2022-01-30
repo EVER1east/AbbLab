@@ -7,6 +7,10 @@ namespace AbbLab.SemanticVersioning
 {
     public partial class PartialVersion : IFormattable
     {
+        /// <summary>
+        ///   <para>Returns the string representation of this partial version.</para>
+        /// </summary>
+        /// <returns>The string representation of this partial version.</returns>
         [Pure] public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
@@ -35,6 +39,31 @@ namespace AbbLab.SemanticVersioning
             }
             return sb.ToString();
         }
+        /// <summary>
+        ///   <para>Converts this partial version to its equivalent string representation, using the specified <paramref name="format"/>.</para>
+        ///   <para>
+        ///     <paramref name="format"/> replaces the following patterns:
+        ///     <c>'M'</c> - major version component;
+        ///     <c>'MM'</c> - major version component, but only if it's greater than zero;
+        ///     the same for minor and patch components with <c>'m'</c>/<c>'mm'</c> and <c>'p'</c>/<c>'pp'</c> accordingly;
+        ///     <c>ppp</c> and <c>'mmm'</c> - pre-release or build metadata identifiers accordingly separated by dots (<c>'.'</c>).
+        ///   </para>
+        ///   <para>
+        ///     Partial version components can be formatted by appending <c>:format</c>. For example, <c>M:0_</c> is equivalent to <c>MM</c>,
+        ///     and <c>M:wx,_x</c> replaces all wildcards and omitted components with the <c>'x'</c> wildcard.
+        ///     See <see cref="PartialComponent.ToString(string?)"/> for more information.
+        ///   </para>
+        ///   <para>
+        ///     Separators, such as dots, hyphens, pluses and spaces (<c>'.'</c>, <c>'-'</c>, <c>'+'</c> and <c>' '</c>) are removed,
+        ///     if the subsequent pattern is omitted (<c>'MM'</c>, <c>'mm'</c>, <c>'pp'</c>, or if there are no pre-release or build
+        ///     metadata identifiers in the version).
+        ///     The patterns can be escaped by inserting <c>'\'</c> before the pattern.
+        ///     Note that you need to insert multiple backslashes in patterns like <c>'mm'</c>, otherwise the method will recognize
+        ///     the last <c>'m'</c> as a pattern.
+        ///   </para>
+        /// </summary>
+        /// <param name="format">The format to use.</param>
+        /// <returns>The string representation of this partial version, as specified by <paramref name="format"/>.</returns>
         [Pure] public unsafe string ToString(string? format)
         {
             if (format is null or "G" or "g") return ToString();
