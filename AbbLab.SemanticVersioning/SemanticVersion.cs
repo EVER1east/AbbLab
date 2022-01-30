@@ -203,6 +203,10 @@ namespace AbbLab.SemanticVersioning
             _preReleases = Array.Empty<SemanticPreRelease>();
             _buildMetadata = Array.Empty<string>();
         }
+        /// <summary>
+        ///   <para>Initializes a new instance of the <see cref="SemanticVersion"/> class using the specified <paramref name="partialVersion"/> major, minor and patch version components, replacing all wildcards and omitted ones with 0.</para>
+        /// </summary>
+        /// <param name="partialVersion">The <see cref="PartialVersion"/> to use the major, minor and patch version components of.</param>
         public SemanticVersion(PartialVersion partialVersion)
         {
             Major = partialVersion.Major.GetValueOrZero();
@@ -225,6 +229,10 @@ namespace AbbLab.SemanticVersioning
         /// <param name="semanticVersion">The <see cref="SemanticVersion"/> to convert to a <see cref="Version"/>.</param>
         [Pure] public static explicit operator Version(SemanticVersion semanticVersion)
             => new Version(semanticVersion.Major, semanticVersion.Minor, semanticVersion.Patch);
+        /// <summary>
+        ///   <para>Defines an explicit conversion of a <see cref="PartialVersion"/> to a <see cref="SemanticVersion"/>.</para>
+        /// </summary>
+        /// <param name="partialVersion">The <see cref="PartialVersion"/> to convert to a <see cref="SemanticVersion"/>.</param>
         [Pure] public static explicit operator SemanticVersion(PartialVersion partialVersion)
             => new SemanticVersion(partialVersion);
 

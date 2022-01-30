@@ -59,6 +59,9 @@ namespace AbbLab.SemanticVersioning
         private List<string>? _buildMetadata;
         private ReadOnlyCollection<SemanticPreRelease>? _preReleasesReadonly;
         private ReadOnlyCollection<string>? _buildMetadataReadonly;
+        /// <summary>
+        ///   <para>Gets a read-only collection of the pre-release identifiers of the semantic version.</para>
+        /// </summary>
         public ReadOnlyCollection<SemanticPreRelease> PreReleases
         {
             get
@@ -68,6 +71,9 @@ namespace AbbLab.SemanticVersioning
                 return _preReleasesReadonly = new ReadOnlyCollection<SemanticPreRelease>(_preReleases);
             }
         }
+        /// <summary>
+        ///   <para>Gets a read-only collection of the build metadata identifiers of the semantic version.</para>
+        /// </summary>
         public ReadOnlyCollection<string> BuildMetadata
         {
             get
