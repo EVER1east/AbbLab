@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using AbbLab.Extensions;
 using JetBrains.Annotations;
@@ -242,14 +243,16 @@ namespace AbbLab.SemanticVersioning
         ///   <para>Defines an explicit conversion of a <see cref="Version"/> to a <see cref="PartialVersion"/>.</para>
         /// </summary>
         /// <param name="systemVersion">The <see cref="Version"/> to convert to a <see cref="PartialVersion"/>.</param>
-        [Pure] public static explicit operator PartialVersion(Version systemVersion)
-            => new PartialVersion(systemVersion);
+        [return: NotNullIfNotNull("systemVersion")]
+        [Pure] public static explicit operator PartialVersion?(Version? systemVersion)
+            => systemVersion is null ? null : new PartialVersion(systemVersion);
         /// <summary>
         ///   <para>Defines an implicit conversion of a <see cref="SemanticVersion"/> to a <see cref="PartialVersion"/>.</para>
         /// </summary>
         /// <param name="semanticVersion">The <see cref="SemanticVersion"/> to convert to a <see cref="PartialVersion"/>.</param>
-        [Pure] public static implicit operator PartialVersion(SemanticVersion semanticVersion)
-            => new PartialVersion(semanticVersion);
+        [return: NotNullIfNotNull("semanticVersion")]
+        [Pure] public static implicit operator PartialVersion?(SemanticVersion? semanticVersion)
+            => semanticVersion is null ? null : new PartialVersion(semanticVersion);
 
         /// <inheritdoc/>
         [Pure] public bool Equals(PartialVersion? other)

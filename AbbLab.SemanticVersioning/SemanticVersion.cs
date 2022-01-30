@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using AbbLab.Extensions;
 using JetBrains.Annotations;
@@ -221,20 +222,23 @@ namespace AbbLab.SemanticVersioning
         ///   <para>Defines an explicit conversion of a <see cref="Version"/> to a <see cref="SemanticVersion"/>.</para>
         /// </summary>
         /// <param name="systemVersion">The <see cref="Version"/> to convert to a <see cref="SemanticVersion"/>.</param>
-        [Pure] public static explicit operator SemanticVersion(Version systemVersion)
-            => new SemanticVersion(systemVersion);
+        [return: NotNullIfNotNull("systemVersion")]
+        [Pure] public static explicit operator SemanticVersion?(Version? systemVersion)
+            => systemVersion is null ? null : new SemanticVersion(systemVersion);
         /// <summary>
         ///   <para>Defines an explicit conversion of a <see cref="SemanticVersion"/> to a <see cref="Version"/>.</para>
         /// </summary>
         /// <param name="semanticVersion">The <see cref="SemanticVersion"/> to convert to a <see cref="Version"/>.</param>
-        [Pure] public static explicit operator Version(SemanticVersion semanticVersion)
-            => new Version(semanticVersion.Major, semanticVersion.Minor, semanticVersion.Patch);
+        [return: NotNullIfNotNull("semanticVersion")]
+        [Pure] public static explicit operator Version?(SemanticVersion? semanticVersion)
+            => semanticVersion is null ? null : new Version(semanticVersion.Major, semanticVersion.Minor, semanticVersion.Patch);
         /// <summary>
         ///   <para>Defines an explicit conversion of a <see cref="PartialVersion"/> to a <see cref="SemanticVersion"/>.</para>
         /// </summary>
         /// <param name="partialVersion">The <see cref="PartialVersion"/> to convert to a <see cref="SemanticVersion"/>.</param>
-        [Pure] public static explicit operator SemanticVersion(PartialVersion partialVersion)
-            => new SemanticVersion(partialVersion);
+        [return: NotNullIfNotNull("partialVersion")]
+        [Pure] public static explicit operator SemanticVersion?(PartialVersion? partialVersion)
+            => partialVersion is null ? null : new SemanticVersion(partialVersion);
 
         /// <inheritdoc/>
         [Pure] public bool Equals(SemanticVersion? other)
