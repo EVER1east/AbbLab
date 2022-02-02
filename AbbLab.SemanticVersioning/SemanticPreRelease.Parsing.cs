@@ -108,6 +108,7 @@ namespace AbbLab.SemanticVersioning
 
         internal static SemanticErrorCode ParseInternal(ReadOnlySpan<char> identifier, SemanticOptions options, out SemanticPreRelease preRelease)
         {
+            identifier = Util.Trim(identifier, options);
             if (Util.IsAllDigits(identifier))
             {
                 if (identifier[0] is '0' && identifier.Length > 1 && (options & SemanticOptions.AllowLeadingZeroes) is 0)
@@ -121,6 +122,19 @@ namespace AbbLab.SemanticVersioning
         }
         internal static SemanticErrorCode ParseInternal(string text, SemanticOptions options, out SemanticPreRelease preRelease)
         {
+            if (Util.TryTrim(text, options, out ReadOnlySpan<char> trimmed))
+            {
+                if (Util.IsAllDigits(trimmed))
+                {
+                    if (trimmed[0] is '0' && trimmed.Length > 1 && (options & SemanticOptions.AllowLeadingZeroes) is 0)
+                        return Util.Fail(SemanticErrorCode.PreReleaseLeadingZeroes, out preRelease);
+                    if (!Util.TryParse(trimmed, out int number))
+                        return Util.Fail(SemanticErrorCode.PreReleaseTooBig, out preRelease);
+                    preRelease = new SemanticPreRelease(number);
+                }
+                else preRelease = new SemanticPreRelease(new string(trimmed), false);
+                return SemanticErrorCode.Success;
+            }
             if (Util.IsAllDigits(text))
             {
                 if (text[0] is '0' && text.Length > 1 && (options & SemanticOptions.AllowLeadingZeroes) is 0)

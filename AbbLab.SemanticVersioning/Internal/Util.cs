@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using System.Text;
 using JetBrains.Annotations;
 
@@ -41,6 +42,45 @@ namespace AbbLab.SemanticVersioning
             for (int i = 0; i < length; i++)
                 if (!IsValidCharacter(identifier[i]))
                     return false;
+            return true;
+        }
+
+        public static ReadOnlySpan<char> Trim(ReadOnlySpan<char> span, SemanticOptions options)
+        {
+            const SemanticOptions whiteMask = SemanticOptions.AllowLeadingWhite | SemanticOptions.AllowTrailingWhite;
+            return (options & whiteMask) switch
+            {
+                whiteMask => span.Trim(),
+                SemanticOptions.AllowLeadingWhite => span.TrimStart(),
+                SemanticOptions.AllowTrailingWhite => span.TrimEnd(),
+                _ => span,
+            };
+        }
+        public static bool TryTrim(string text, SemanticOptions options, out ReadOnlySpan<char> result)
+        {
+            const SemanticOptions whiteMask = SemanticOptions.AllowLeadingWhite | SemanticOptions.AllowTrailingWhite;
+            ReadOnlySpan<char> span;
+            switch (options & whiteMask)
+            {
+                case whiteMask:
+                    span = text.AsSpan().Trim();
+                    break;
+                case SemanticOptions.AllowLeadingWhite:
+                    span = text.AsSpan().TrimStart();
+                    break;
+                case SemanticOptions.AllowTrailingWhite:
+                    span = text.AsSpan().TrimEnd();
+                    break;
+                default:
+                    result = default;
+                    return false;
+            }
+            if (span.Length == text.Length)
+            {
+                result = default;
+                return false;
+            }
+            result = span;
             return true;
         }
 
