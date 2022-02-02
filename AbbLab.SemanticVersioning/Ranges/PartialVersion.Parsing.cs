@@ -143,7 +143,7 @@ namespace AbbLab.SemanticVersioning
             }
             else if (parser.SkipAny('x', 'X', '*', out int wildcard))
             {
-                major = PartialComponent.GetWildcardComponent((char)wildcard);
+                major = PartialComponent.Parse((char)wildcard);
                 if (innerWhite) parser.SkipWhitespaces();
             }
 
@@ -161,7 +161,7 @@ namespace AbbLab.SemanticVersioning
                 }
                 else if (parser.SkipAny('x', 'X', '*', out int wildcard))
                 {
-                    minor = PartialComponent.GetWildcardComponent((char)wildcard);
+                    minor = PartialComponent.Parse((char)wildcard);
                     if (innerWhite) parser.SkipWhitespaces();
                 }
             }
@@ -180,7 +180,7 @@ namespace AbbLab.SemanticVersioning
                 }
                 else if (parser.SkipAny('x', 'X', '*', out int wildcard))
                 {
-                    patch = PartialComponent.GetWildcardComponent((char)wildcard);
+                    patch = PartialComponent.Parse((char)wildcard);
                     if (innerWhite) parser.SkipWhitespaces();
                 }
             }

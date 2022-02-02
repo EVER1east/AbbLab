@@ -87,18 +87,6 @@ namespace AbbLab.SemanticVersioning
         /// </summary>
         public static readonly PartialComponent Zero = new PartialComponent(0);
 
-        /// <summary>
-        ///   <para>Gets the partial version component that represents the specified wildcard <paramref name="character"/>.</para>
-        /// </summary>
-        /// <param name="character">The partial version component wildcard: <c>'x'</c>, <c>'X'</c> or <c>'*'</c>.</param>
-        /// <returns>The partial version component that represents the specified wildcard <paramref name="character"/>.</returns>
-        /// <exception cref="ArgumentException"><paramref name="character"/> is not a wildcard character.</exception>
-        [Pure] public static PartialComponent GetWildcardComponent(char character) => character switch
-        {
-            'x' => X, 'X' => CapitalX, '*' => Star,
-            _ => throw new ArgumentException("The specified character is not a wildcard character.", nameof(character)),
-        };
-
         /// <inheritdoc/>
         [Pure] public bool Equals(PartialComponent other) => _value < -1 ? other._value < -1 : _value == other._value;
         /// <inheritdoc/>
