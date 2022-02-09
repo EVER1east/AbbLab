@@ -10,7 +10,6 @@
     <Authors>Abbysssal</Authors>
     <Company>$(Authors)</Company>
     <Copyright></Copyright>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
     <!-- Title, Description, Tags -->
     <Title>$(AssemblyName)</Title>
@@ -18,12 +17,6 @@
 
     </Description>
     <PackageTags></PackageTags>
-
-    <!-- Repository -->
-    <PackageProjectUrl>https://github.com/Abbysssal/AbbLab</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/Abbysssal/AbbLab.git</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryBranch>main</RepositoryBranch>
 
   </PropertyGroup>
 
